@@ -1,13 +1,11 @@
 <?php
 session_start();
 
-// Inclua as classes ou arquivos necessários
-// Exemplo: include_once 'path/to/Usuarios.php';
-
-// Recupera o objeto Usuarios da sessão, se existir
 $Usuarios = isset($_SESSION['Usuarios']) ? $_SESSION['Usuarios'] : null;
-$usuario = $Usuarios ? $Usuarios : null; // Define a variável $usuario corretamente
+$usuario = $Usuarios; 
 ?>
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -154,10 +152,10 @@ $usuario = $Usuarios ? $Usuarios : null; // Define a variável $usuario corretam
         <h1>Bem-vindo à Zero1 Piscinas!</h1>
         <div>
             <?php if ($usuario): ?>
-                <p class="saudacao-login"><strong><?= htmlspecialchars($usuario['nome']); ?></strong></p>
+                <p class="saudacao-login">Olá, <strong><?= htmlspecialchars($usuario['nome']); ?></strong>!</p>
                 <a href="logout.php" class="btn">Sair</a>
             <?php else: ?>
-                <a href="LoginCadastro.php" class="btn">Login/ Cadastro</a>
+                <a href="LoginCadastro.php" class="btn">Login/Cadastro</a>
             <?php endif; ?>
         </div>
         <br><br><br><br>
@@ -256,6 +254,10 @@ $usuario = $Usuarios ? $Usuarios : null; // Define a variável $usuario corretam
                     suas necessidades com agilidade e excelência. Trabalhamos com tecnologia de ponta e um compromisso 
                     inabalável com a qualidade e o meio ambiente.
                 </p>
+
+                <footer>
+        <p>© 2025 Zero1 Piscinas. Todos os direitos reservados.</p>
+                </footer>
             </div>
         </div>
     </div>

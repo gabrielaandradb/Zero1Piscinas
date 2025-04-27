@@ -1,45 +1,62 @@
 <?php
 session_start();
+$conn = new mysqli('localhost', 'root', '', 'Zero1Piscinas');
+if ($conn->connect_error) {
+    die("Falha na conexão: " . $conn->connect_error);
+}
+
+$erro = '';
+$sucesso = '';
 
 // Verifique se o formulário de login foi enviado
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email_login']) && isset($_POST['senha_login'])) {
-    // Aqui você deve fazer a consulta ao banco de dados para verificar as credenciais
-    // Exemplo de validação:
-    $email = $_POST['email_login'];
-    $senha = $_POST['senha_login'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['email_login']) && isset($_POST['senha_login'])) {
+        $email = $_POST['email_login'];
+        $senha = $_POST['senha_login'];
 
-    // Conectar ao banco de dados
-    $conn = new mysqli('localhost', 'root', '', 'Zero1Piscinas');
-    if ($conn->connect_error) {
-        die("Falha na conexão: " . $conn->connect_error);
-    }
+        $sql = "SELECT * FROM usuarios WHERE email = '$email' AND senha = '$senha'";
+        $result = $conn->query($sql);
 
-    // Consulta para verificar as credenciais
-    $sql = "SELECT * FROM usuarios WHERE email = '$email' AND senha = '$senha'";
-    $result = $conn->query($sql);
+        if ($result->num_rows > 0) {
+            $usuario = $result->fetch_assoc();
+            $_SESSION['ClassUsuarios'] = $usuario;
+            $_SESSION['tipo_usuario'] = $usuario['tipo_usuario'];
 
-    if ($result->num_rows > 0) {
-        // Se encontrar o usuário, armazenar na sessão
-        $usuario = $result->fetch_assoc();
-        $_SESSION['ClassUsuarios'] = $usuario;
-        $_SESSION['tipo_usuario'] = $usuario['tipo_usuario']; // Armazene o tipo de usuário
-
-        // Redirecionar para a página correta
-        if ($usuario['tipo_usuario'] == 'profissional') {
-            header('Location: Profissionais.php');
-            exit;
-        } else if ($usuario['tipo_usuario'] == 'cliente') {
-            header('Location: Clientes.php');
-            exit;
+            if ($usuario['tipo_usuario'] == 'profissional') {
+                header('Location: Profissionais.php');
+                exit;
+            } else if ($usuario['tipo_usuario'] == 'cliente') {
+                header('Location: index.php');
+                exit;
+            }
+        } else {
+            $erro = "E-mail ou senha incorretos!";
         }
-    } else {
-        // Se o login falhar, exibir uma mensagem de erro
-        $erro = "E-mail ou senha incorretos!";
     }
-} else {
-    $erro = ''; // Inicializa a variável de erro
+
+    // Verifique se o formulário de cadastro foi enviado
+    if (isset($_POST['email_cad']) && isset($_POST['senha_cad'])) {
+        $nome = $_POST['nome_cad'];
+        $email = $_POST['email_cad'];
+        $telefone = $_POST['telefone_cad'];
+        $endereco = $_POST['endereco_cad'];
+        $senha = $_POST['senha_cad'];
+
+        $sql = "INSERT INTO usuarios (nome, email, telefone, endereco, senha, tipo_usuario) VALUES (?, ?, ?, ?, ?, 'cliente')";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('sssss', $nome, $email, $telefone, $endereco, $senha);
+
+        if ($stmt->execute()) {
+            $sucesso = "Cadastro realizado com sucesso! Faça login.";
+        } else {
+            $erro = "Erro ao cadastrar usuário: " . $conn->error;
+        }
+        $stmt->close();
+    }
 }
+$conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -51,55 +68,72 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email_login']) && isse
     <script src="js/script.js" defer></script>
 </head>
 <body>
-    <div class="form-container">
-        <div id="login-form">
-            <form method="post" action="">
-                <h3>Login</h3>
-                <label for="email_login">E-mail:</label>
-                <input type="email" id="email_login" name="email_login" placeholder="seuemail@exemplo.com" required>
+<div class="form-container">
 
-                <label for="senha_login">Senha:</label>
-                <input type="password" id="senha_login" name="senha_login" placeholder="senha" required>
 
-                <input type="submit" value="Entrar">
-                <div class="form-switch">
-                    <a href="javascript:void(0);" onclick="mostrarCadastro()">Não tem uma conta? Cadastre-se</a>
-                </div>
+    <!-- Formulário de Login -->
+<div id="login-form">
+    <form method="post" action="">
+        <h3>Login</h3>
+        <label for="email_login">E-mail:</label>
+        <input type="email" id="email_login" name="email_login" placeholder="seuemail@exemplo.com" required>
 
-                <!-- Mensagem de erro -->
-                <?php if ($erro): ?>
-                <p style="color: red;"><?= htmlspecialchars($erro) ?></p>
-                <?php endif; ?>
-            </form>
+        <label for="senha_login">Senha:</label>
+        <input type="password" id="senha_login" name="senha_login" placeholder="senha" required>
+
+        <input type="submit" value="Entrar">
+        <div class="form-switch">
+            <a href="javascript:void(0);" onclick="mostrarCadastro()">Não tem uma conta? Cadastre-se</a>
         </div>
 
-        <div id="cadastro-form" class="hidden">
-            <form method="post" action="">
-                <h3>Cadastro</h3>
-                <label for="nome_cad">Nome completo:</label>
-                <input type="text" id="nome_cad" name="nome_cad" placeholder="Seu nome completo" required>
+        <!-- Mensagens -->
+        <?php if ($erro): ?>
+        <p style="color: red;"><?= htmlspecialchars($erro) ?></p>
+        <?php endif; ?>
+        <?php if ($sucesso): ?>
+        <p style="color: green;"><?= htmlspecialchars($sucesso) ?></p>
+        <?php endif; ?>
+    </form>
+</div>
 
-                <label for="email_cad">E-mail:</label>
-                <input type="email" id="email_cad" name="email_cad" placeholder="seuemail@exemplo.com" required>
+<!-- Formulário de Cadastro -->
+<div id="cadastro-form" class="hidden">
+    <form method="post" action="">
+        <h3>Cadastro</h3>
 
-                <label for="telefone_cad">Telefone:</label>
-                <input type="tel" id="telefone_cad" name="telefone_cad" placeholder="(xx) xxxxx-xxxx" required>
+        <label for="nome_cad">Nome completo:</label>
+        <input type="text" id="nome_cad" name="nome_cad" placeholder="Seu nome completo" required>
 
-                <label for="endereco_cad">Endereço:</label>
-                <input type="text" id="endereco" name="endereco_cad" placeholder="Endereço completo" required>
+        <label for="email_cad">E-mail:</label>
+        <input type="email" id="email_cad" name="email_cad" placeholder="seuemail@exemplo.com" required>
 
-                <label for="senha_cad">Senha:</label>
-                <input type="password" id="senha_cad" name="senha_cad" placeholder="ex: 123456" required>
+        <label for="telefone_cad">Telefone:</label>
+        <input type="tel" id="telefone_cad" name="telefone_cad" placeholder="(xx) xxxxx-xxxx" required>
 
-                <input type="submit" value="Cadastrar">
+        <label for="endereco_cad">Endereço:</label>
+        <input type="text" id="endereco" name="endereco_cad" placeholder="Endereço completo" required>
 
-                <div class="form-switch">
-                    <a href="javascript:void(0);" onclick="mostrarLogin()">Já tem uma conta? Faça login</a>
-                </div>
-            </form>
+        <label for="senha_cad">Senha:</label>
+        <input type="password" id="senha_cad" name="senha_cad" placeholder="ex: 123456" required>
+
+        <input type="submit" value="Cadastrar">
+
+        <div class="form-switch">
+            <a href="javascript:void(0);" onclick="mostrarLogin()">Já tem uma conta? Faça login</a>
         </div>
+
+        <!-- Mensagens -->
+        <?php if ($erro): ?>
+        <p style="color: red;"><?= htmlspecialchars($erro) ?></p>
+        <?php endif; ?>
+        <?php if ($sucesso): ?>
+        <p style="color: green;"><?= htmlspecialchars($sucesso) ?></p>
+        <?php endif; ?>
+    </form>
+
+</div>
     </div>
-
+</>
     <script>
         function mostrarLogin() {
             document.getElementById("login-form").classList.remove("hidden");
