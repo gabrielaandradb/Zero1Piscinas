@@ -58,7 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $stmt->close();
     }
-       
+       /*exclusao de conta*/
+if (isset($_GET['mensagem'])) {
+    echo '<div style="margin: 20px; padding: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px;">' . htmlspecialchars($_GET['mensagem']) . '</div>';
+}
+
+if (isset($_GET['mensagemErro'])) {
+    echo '<div style="margin: 20px; padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">' . htmlspecialchars($_GET['mensagemErro']) . '</div>';
 }
 }
 
