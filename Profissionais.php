@@ -47,20 +47,23 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
         /* Estilo Geral */
         body {
             font-family: 'Segoe UI', sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
+            background: linear-gradient(to bottom, #d0f0ff, #f0faff);
+            background-size: cover;
             margin: 0;
             padding: 0;
+            color: #333;
             min-height: 100vh;
+            display: flex;  /* Permite usar o flexbox */
+            flex-direction: column;  /* Organiza os elementos de forma vertical */
+            height: 100vh;  /* Faz o corpo preencher toda a altura da tela */
         }
 
         .container {
-            display: grid;
-            grid-template-columns: 250px 1fr;
-            height: auto;
+            display: flex;  /* Ajusta o layout para que ocupe toda a tela */
+            flex: 1;  /* Faz o container preencher o restante da tela */
+            height: 100%;  /* Garante que o container tenha 100% da altura */
         }
 
-        /* Menu */
         .menu {
             background-color: #E0F7FA;
             color: #374151;
@@ -68,6 +71,8 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
             display: flex;
             flex-direction: column;
             align-items: center;
+            height: auto;
+            width: 250px;
         }
 
         .menu h2 {
@@ -100,18 +105,18 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
 
         /* Conteúdo Principal */
         .content {
+            flex: 1;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            align-items: stretch;
             gap: 20px;
-            padding: 20px;
+            height: 100%;
+            overflow-y: auto;  /* Permite rolar a página se o conteúdo for grande */
         }
-
-        /* Cabeçalho */
 
         .header {
             display: flex;
-            flex-direction: column; 
+            flex-direction: column;
             justify-content: center;
             align-items: flex-start;
             background-color: #ffffff;
@@ -194,17 +199,17 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
         /* Responsividade */
         @media (max-width: 768px) {
             .container {
-                grid-template-columns: 1fr;
-            }
+            flex-direction: column;  /* Muda para uma coluna em telas pequenas */
+        }  
 
-            .menu {
-                align-items: center;
-                padding: 10px;
-            }
+        .menu {
+            width: 100%;
+            height: auto;
+        }
 
-            .card {
-                width: 95%;
-            }
+        .card {
+            width: 95%;
+        }
         }
     </style>
 </head>
@@ -219,7 +224,6 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
             <ul>
                 <li><a href="#usuarios">Usuários Cadastrados</a></li>
                 <li><a href="#formularios">Formulários Recebidos</a></li>
-                <li><a href="#perfil">Meus Dados</a></li>
             </ul>
         </nav>
 
@@ -231,7 +235,7 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
             <p><strong>Telefone:</strong> <?= htmlspecialchars($profissional['telefone']); ?></p>
             <p><strong>Endereço:</strong> <?= htmlspecialchars($profissional['endereco']); ?></p>
             <br>
-            <input type="button" value="Editar informações" class="btn-dados" onclick="window.location.href='perfilProfissional.php';">
+            <input type="button" value="Editar informações" class="btn-dados" onclick="window.location.href='editarProfissional.php';">
         </div>
     </div>
 
@@ -239,7 +243,7 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
     <div class="content">
         <!-- Cabeçalho -->
         <div class="header">
-             <h1>Bem-vindo, <strong><?= htmlspecialchars($profissional['nome']); ?></strong></h1>
+             <h1>Bem-vindo Profissional, <strong><?= htmlspecialchars($profissional['nome']); ?></strong></h1>
         <div class="header-text">
              <p class="welcome">Gerenciamento de Serviços</p>
         </div>

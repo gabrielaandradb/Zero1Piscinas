@@ -1,16 +1,13 @@
 <?php
 session_start();
 
-// Verifique se o usuário está logado e é um cliente
 if (!isset($_SESSION['ClassUsuarios']) || $_SESSION['tipo_usuario'] != 'cliente') {
     header('Location: LoginCadastro.php');
     exit;
 }
 
-// Defina a variável $mensagemSolicitacao (caso ela não tenha sido definida antes)
 $mensagemSolicitacao = isset($_SESSION['mensagemSolicitacao']) ? $_SESSION['mensagemSolicitacao'] : '';
 
-// Apague a mensagem da sessão após ser usada
 unset($_SESSION['mensagemSolicitacao']);
 ?>
 
@@ -22,7 +19,6 @@ unset($_SESSION['mensagemSolicitacao']);
     <title>Zero1 Piscinas - Clientes</title>
     <link rel="stylesheet" href="css/estilo.css">
     <style>
-        /* Estilo geral */
         body {
             font-family: 'Segoe UI', sans-serif;
             background-color: #f4f4f4;
@@ -32,13 +28,14 @@ unset($_SESSION['mensagemSolicitacao']);
 
         .container {
             display: grid;
-            grid-template-columns: 250px 1fr;
+            grid-template-columns: 300px 1fr; 
             height: auto;
         }
 
+
         .menu {
-            background-color: #E0F7FA; /* Azul bem clarinho */
-            color: #374151; /* Texto em cinza escuro */
+            background-color: #E0F7FA; 
+            color: #374151; 
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -49,7 +46,7 @@ unset($_SESSION['mensagemSolicitacao']);
         .menu h2 {
             font-size: 30px;
             margin: 0;
-            color: #1F2937; /* Cinza mais escuro */
+            color: #1F2937; 
         }
 
         .menu nav {
@@ -186,9 +183,17 @@ unset($_SESSION['mensagemSolicitacao']);
         <h2>Zero1 Piscinas</h2>
         <ul>
             <li><a href="index.php">Home</a></li>
-            <li><a href="#meus-dados">Meus Dados</a></li>
-            <li><a href="#minha-piscina">Contratar Serviço</a></li>
         </ul>
+
+        <!-- Seção Meus Dados -->
+        <div id="meus-dados" class="card">
+            <h2>Meus Dados</h2>
+            <p><strong>Nome:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['nome']); ?></p>
+            <p><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['email']); ?></p>
+            <p><strong>Telefone:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['telefone']); ?></p>
+            <p><strong>Endereço:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['endereco']); ?></p>
+            <button class="btn" onclick="window.location.href='editarClientes.php';">Editar Informações</button>
+        </div>
     </div>
 
     <!-- Conteúdo principal -->
@@ -200,24 +205,15 @@ unset($_SESSION['mensagemSolicitacao']);
 
         <!-- Seção Index -->
         <div id="index" class="card">
-            <h2>Bem-vindo(a) ao Zero1 Piscinas</h2>
-            <p>Aqui você pode gerenciar suas informações e acompanhar os serviços.</p>
+            <h3>Aqui você pode gerenciar suas informações e acompanhar os serviços.</h3>
+            <p></p>
         </div>
 
-        <!-- Seção Meus Dados -->
-        <div id="meus-dados" class="card">
-            <h2>Meus Dados</h2>
-            <p><strong>Nome:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['nome']); ?></p>
-            <p><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['email']); ?></p>
-            <p><strong>Telefone:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['telefone']); ?></p>
-            <p><strong>Endereço:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['endereco']); ?></p>
-            <button class="btn" onclick="window.location.href='perfilClientes.php';">Editar Informações</button>
-        </div>
 
         <!-- Seção Minha Piscina -->
         <div id="minha-piscina" class="card">
             <h2>Detalhes da Minha Piscina</h2>
-            <form action="SolicitarOrcamentos.php" method="post" enctype="multipart/form-data">
+            <form action="salvarSolicitacao.php" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="usuarioId" value="<?php echo htmlspecialchars($_SESSION['ClassUsuarios']['id']); ?>">
 
                 <label for="tamanho">Tamanho da Piscina:</label>

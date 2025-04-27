@@ -58,9 +58,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $stmt->close();
     }
+       /*exclusao de conta*/
+if (isset($_GET['mensagem'])) {
+    echo '<div style="margin: 20px; padding: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px;">' . htmlspecialchars($_GET['mensagem']) . '</div>';
+}
+
+if (isset($_GET['mensagemErro'])) {
+    echo '<div style="margin: 20px; padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">' . htmlspecialchars($_GET['mensagemErro']) . '</div>';
+}
 }
 
 $conn->close();
+
 ?>
 
 
@@ -72,37 +81,25 @@ $conn->close();
     <title>Login/Cadastro</title>
     <link rel="stylesheet" href="css/estilo.css">
     <script src="js/script.js" defer></script>
-
-    <script async defer crossorigin="anonymous" 
-        src="https://connect.facebook.net/pt_BR/sdk.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
-        window.fbAsyncInit = function() {
-            FB.init({
-                appId: '1339744507246506', // Use seu App ID
-                cookie: true, // Habilita cookies
-                xfbml: true, // Renderiza plugins sociais automaticamente
-                version: 'v16.0' // Versão da API Graph
+        function handleCredentialResponse(response) {
+            console.log("Encoded JWT ID token: " + response.credential);
+            // Aqui você pode enviar o token para o backend para validação e login.
+        }
+
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: "964075037995-62drlhckrr5cfbu79ets39tpk02ei1h4.apps.googleusercontent.com", // Substitua pelo seu Client ID do Google
+                callback: handleCredentialResponse
             });
+
+            google.accounts.id.renderButton(
+                document.getElementById("google-signin"),
+                { theme: "outline", size: "large" } // Personalize o botão aqui
+            );
         };
     </script>
-
-<script>
-    function loginFacebook() {
-        FB.login(function(response) {
-            if (response.authResponse) {
-                console.log('Login bem-sucedido:', response);
-                FB.api('/me', { fields: 'name,email' }, function(userInfo) {
-                    console.log('Informações do usuário:', userInfo);
-                    // Aqui você pode enviar userInfo.name e userInfo.email para o servidor
-                    alert('Olá, ' + userInfo.name + '! Seu login foi bem-sucedido.');
-                });
-            } else {
-                console.log('Usuário cancelou ou não autorizou o login.');
-                alert('Login cancelado ou não autorizado.');
-            }
-        }, { scope: 'email' }); // Solicita acesso ao e-mail do usuário
-    }
-</script>
 
 </head>
 <body>
@@ -120,8 +117,7 @@ $conn->close();
         <input type="password" id="senha_login" name="senha_login" placeholder="senha" required>
 
 
-        <div id="fb-root"></div>
-<button onclick="loginFacebook()">Login com Facebook</button>
+        <div id="google-signin"></div> <!-- Botão de login com Google -->
 
 
         <input type="submit" value="Entrar">

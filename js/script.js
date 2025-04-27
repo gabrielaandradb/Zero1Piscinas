@@ -24,22 +24,7 @@ function mostrarCadastro() {
     return nome && email && senha;
   }
   
-  /*FACEBOOK*/
-  function checkLoginState() {
-    FB.getLoginStatus(function(response) {
-      statusChangeCallback(response);
-    });
-  }
+  import react from"react";
+  import GoogleLogin from "react-google-login";
   
-  function statusChangeCallback(response) {
-    if (response.status === 'connected') {
-      FB.api('/me', {fields: 'name,email'}, function(user) {
-        document.getElementById('status').innerHTML = 
-          'Bem-vindo(a), ' + user.name + ' (' + user.email + ')!';
-      });
-    } else {
-      document.getElementById('status').innerHTML = 
-        '';
-    }
-  }
   
