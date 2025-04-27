@@ -31,12 +31,15 @@ CREATE TABLE piscinas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT,
     tamanho VARCHAR(10),
-    tipo ENUM('fibra', 'vinil', 'alvenaria', 'plastico') NOT NULL,
+    tipo VARCHAR(20),
     profundidade VARCHAR(10),
-    dataInstalacao date,
-    observacoes TEXT,
-    enderecoCliente TEXT,
-    FOREIGN KEY (cliente_id) REFERENCES clientes(id) 
+    data_instalacao DATE,
+    servico_desejado VARCHAR(100),
+    foto_piscina VARCHAR(255),
+    status ENUM('pendente', 'respondido') DEFAULT 'pendente',
+    resposta TEXT,
+    data_solicitacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id)
 );
 
 CREATE TABLE servicos (

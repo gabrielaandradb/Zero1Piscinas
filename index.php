@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-$Usuarios = isset($_SESSION['Usuarios']) ? $_SESSION['Usuarios'] : null;
-$usuario = $Usuarios; 
+$usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null;
+
 ?>
 
 
@@ -42,25 +42,34 @@ $usuario = $Usuarios;
             color: #555;
             margin-bottom: 25px;
         }
+        .usuario-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; /* Alinha tudo à direita */
+            -top: 20px;
+        }
+
+        .saudacao-login {
+            font-size: 22px; /* Aumenta o tamanho da fonte */
+            color: #000000; /* Cor preta */
+            font-weight: bold; /* Deixa o nome em negrito */
+            margin-right: 0px; /* Adiciona espaço entre o nome e o botão */
+        }
+
         .btn {
             display: inline-block;
-            padding: 15px 30px;
-            background: #0077b6;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
+            padding: 10px 20px;
+            background-color: #4CAF50; /* Cor de fundo do botão */
+            color: white; /* Cor do texto do botão */
             text-decoration: none;
-            border-radius: 30px;
-            transition: background 0.3s, transform 0.3s;
-            float: right;
-            margin-top: 1px;
-            margin-bottom: 5px;
+            border-radius: 5px;
+            text-align: center;
         }
+
         .btn:hover {
-            background: #005f8a;
-            transform: scale(1.05);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            background-color: #45a049; /* Cor do botão ao passar o mouse */
         }
+
         .menu {
             list-style: none;
             display: flex;
@@ -150,15 +159,15 @@ $usuario = $Usuarios;
 <body>
     <div class="index">
         <h1>Bem-vindo à Zero1 Piscinas!</h1>
-        <div>
-            <?php if ($usuario): ?>
-                <p class="saudacao-login">Olá, <strong><?= htmlspecialchars($usuario['nome']); ?></strong>!</p>
-                <a href="logout.php" class="btn">Sair</a>
-            <?php else: ?>
-                <a href="LoginCadastro.php" class="btn">Login/Cadastro</a>
-            <?php endif; ?>
-        </div>
-        <br><br><br><br>
+        <div class="usuario-info">
+    <?php if ($usuario): ?>
+        <p class="saudacao-login"><?= htmlspecialchars($usuario['nome']); ?></p>
+        <a href="logout.php" class="btn">Sair</a>
+    <?php else: ?>
+        <a href="LoginCadastro.php" class="btn">Login/Cadastro</a>
+    <?php endif; ?>
+</div>
+        <br><br>
         <nav>
             <ul class="menu">
                 <li><a href="index.php">Home</a></li>
@@ -171,6 +180,7 @@ $usuario = $Usuarios;
                 <?php endif; ?>
             </ul>
         </nav>
+        <br>
 
         <p class="p-estilo">
             Bem-vindo ao Zero1 Piscinas! Estamos aqui para facilitar o cuidado 

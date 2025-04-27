@@ -27,6 +27,14 @@ if (!$profissional) {
     echo "Profissional não encontrado!";
     exit;
 }
+
+// Consulta para pegar todos os clientes cadastrados
+$query_clientes = "SELECT * FROM usuarios WHERE tipo_usuario = 'cliente'";
+$stmt_clientes = $conexao->prepare($query_clientes);
+$stmt_clientes->execute();
+
+// Armazene os resultados dos clientes
+$clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -100,10 +108,12 @@ if (!$profissional) {
         }
 
         /* Cabeçalho */
+
         .header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column; 
+            justify-content: center;
+            align-items: flex-start;
             background-color: #ffffff;
             padding: 10px 20px;
             border-bottom: 1px solid #ddd;
@@ -112,6 +122,11 @@ if (!$profissional) {
         .header h1 {
             font-size: 24px;
             color: black;
+            margin: 0; /* Remove qualquer margem extra */
+        }
+
+        .header-text {
+            margin-top: 5px;
         }
 
         .header .welcome {
@@ -119,18 +134,6 @@ if (!$profissional) {
             color: #0077b6;
         }
 
-        .header .logout {
-            background-color: #f44336;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .header .logout:hover {
-            background-color: #d32f2f;
-        }
 
         /* Cards */
         .card {
@@ -236,10 +239,13 @@ if (!$profissional) {
     <div class="content">
         <!-- Cabeçalho -->
         <div class="header">
-            <h1>Bem-vindo, <strong><?= htmlspecialchars($profissional['nome']); ?></strong></h1>
-            <p class="welcome">Gerenciamento de Serviços</p>
-            <a href="logout.php" class="btn">Sair</a>
+             <h1>Bem-vindo, <strong><?= htmlspecialchars($profissional['nome']); ?></strong></h1>
+        <div class="header-text">
+             <p class="welcome">Gerenciamento de Serviços</p>
         </div>
+    <a href="logout.php" class="btn">Sair</a>
+</div>
+
 
         <!-- Usuários Cadastrados -->
         <div id="usuarios" class="card">
@@ -271,38 +277,9 @@ if (!$profissional) {
         <!-- Formulários dos Clientes -->
         <div id="formularios" class="card">
             <h2>Formulários Recebidos</h2>
-            <?php if (!empty($formularios)): ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Cliente</th>
-                        <th>Tamanho da Piscina</th>
-                        <th>Tipo de Piscina</th>
-                        <th>Profundidade</th>
-                        <th>Data de Instalação</th>
-                        <th>Endereço</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($formularios as $formulario): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($formulario['clienteNome']); ?></td>
-                        <td><?= htmlspecialchars($formulario['tamanho'] ?? 'Não informado'); ?></td>
-                        <td><?= htmlspecialchars($formulario['tipo'] ?? 'Não informado'); ?></td>
-                        <td><?= htmlspecialchars($formulario['profundidade'] ?? 'Não informado'); ?></td>
-                        <td><?= htmlspecialchars($formulario['dataInstalacao'] ?? 'Não informado'); ?></td>
-                        <td><?= htmlspecialchars($formulario['enderecoCliente'] ?? 'Não informado'); ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            <?php else: ?>
-            <p>Nenhum formulário recebido.</p>
-            <?php endif; ?>
+            <?php include 'SolicitacoesProfissionais.php'; ?>
         </div>
     </div>
-
 </div>
-
 </body>
 </html>

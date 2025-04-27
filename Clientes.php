@@ -217,7 +217,7 @@ unset($_SESSION['mensagemSolicitacao']);
         <!-- Seção Minha Piscina -->
         <div id="minha-piscina" class="card">
             <h2>Detalhes da Minha Piscina</h2>
-            <form action="SolicitarOrcamento.php" method="post" enctype="multipart/form-data">
+            <form action="SolicitarOrcamentos.php" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="usuarioId" value="<?php echo htmlspecialchars($_SESSION['ClassUsuarios']['id']); ?>">
 
                 <label for="tamanho">Tamanho da Piscina:</label>
