@@ -281,7 +281,7 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
         <!-- Formulários dos Clientes -->
         <div id="formularios" class="card">
             <h2>Formulários Recebidos</h2>
-            <?php include 'SolicitacoesProfissionais.php'; ?>
+           
         </div>
     </div>
 </div>

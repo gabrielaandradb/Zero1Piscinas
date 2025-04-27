@@ -248,7 +248,7 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
         </div>
     </div>
     <br><br>
-    <a href="Orcamento.php" class="btn">Solicitar Orçamento</a>
+   <!-- <a href="Orcamento.php" class="btn">Solicitar Orçamento</a>-->
 </div>
 
             <br><br>
