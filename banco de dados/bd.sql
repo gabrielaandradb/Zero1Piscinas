@@ -73,7 +73,6 @@ VALUES
 ('Rafael Andrade', 'rafael@profissional.com', '6199901-1234', 'Rua 1, Brasília', 'raf1209', 'profissional'),
 ('João Oliveira', 'joaooliveira@profissional.com', '6198801-1234', 'Rua 2, Brasília', 'jo3008', 'profissional'),
 ('Kleber Andrade', 'kleber@profissional.com', '6199902-4321', 'Rua 3, Brasília', 'kb0300', 'profissional'),
-('Gabriel Santos', 'gabriel@profissional.com', '6198802-4321', 'Rua 4, Brasília', 'gs1234', 'profissional'),
 ('Gabriela Andrade', 'gabrielaab@gmail.com', '6199664-1234', 'Rua 5, Brasília', '12345g', 'cliente'),
 ('Ilton Bento', 'iltonbento@gmail.com', '6197701-9876', 'Rua 6, Brasília', 'ie2526', 'cliente');
 
@@ -86,8 +85,9 @@ VALUES
 (1, null, null),
 (2, null, null),
 (3, null, null),
-(4, null, null);
 select*from profissionais;
 select*from clientes;
 
 select*from usuarios;
+ALTER TABLE piscinas
+ADD COLUMN resposta_profissional TEXT NULL;
