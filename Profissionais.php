@@ -291,59 +291,59 @@ $stmt_formularios->execute();
 $formularios = $stmt_formularios->fetchAll(PDO::FETCH_ASSOC);
 ?>
         <!-- Formulários dos Clientes -->
-        <div id="formularios" class="card">
-        <h2>Formulários Recebidos</h2>
+       <!-- Formulários dos Clientes -->
+<div id="formularios" class="card">
+    <h2>Formulários Recebidos</h2>
 
-<?php if (!empty($formularios)): ?>
+    <?php
+    // Buscar formulários/serviços recebidos
+    $query_servicos = "
+        SELECT s.id, s.tipo_servico, s.descricao, s.estatus, s.data_solicitacao, u.nome AS cliente_nome
+        FROM servicos s
+        JOIN usuarios u ON s.cliente_id = u.id
+        WHERE s.profissional_id = :id_profissional
+        ORDER BY s.data_solicitacao DESC
+    ";
+    $stmt_servicos = $conexao->prepare($query_servicos);
+    $stmt_servicos->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+    $stmt_servicos->execute();
+
+    $servicos = $stmt_servicos->fetchAll(PDO::FETCH_ASSOC);
+    ?>
+
+    <?php if (!empty($servicos)): ?>
     <table>
         <thead>
             <tr>
                 <th>Cliente</th>
-                <th>Tamanho</th>
-                <th>Tipo</th>
-                <th>Profundidade</th>
-                <th>Data Instalação</th>
-                <th>Serviço</th>
-                <th>Foto</th>
-                <th>Resposta</th>
+                <th>Tipo de Serviço</th>
+                <th>Descrição</th>
+                <th>Status</th>
+                <th>Data da Solicitação</th>
                 <th>Ações</th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($formularios as $formulario): ?>
+            <?php foreach ($servicos as $servico): ?>
             <tr>
-                <td><?= htmlspecialchars($formulario['nome_cliente']); ?></td>
-                <td><?= htmlspecialchars($formulario['tamanho']); ?></td>
-                <td><?= htmlspecialchars($formulario['tipo']); ?></td>
-                <td><?= htmlspecialchars($formulario['profundidade']); ?></td>
-                <td><?= htmlspecialchars($formulario['data_instalacao']); ?></td>
-                <td><?= htmlspecialchars($formulario['servico_desejado']); ?></td>
+                <td><?= htmlspecialchars($servico['cliente_nome']); ?></td>
+                <td><?= htmlspecialchars($servico['tipo_servico']); ?></td>
+                <td><?= htmlspecialchars($servico['descricao']); ?></td>
+                <td><?= htmlspecialchars($servico['estatus']); ?></td>
+                <td><?= date('d/m/Y H:i', strtotime($servico['data_solicitacao'])); ?></td>
                 <td>
-                    <?php if (!empty($formulario['foto_piscina'])): ?>
-                        <a href="<?= htmlspecialchars($formulario['foto_piscina']); ?>" target="_blank">Ver Foto</a>
-                    <?php else: ?>
-                        Sem foto
-                    <?php endif; ?>
-                </td>
-                <td>
-                    <?php if (!empty($formulario['resposta_profissional'])): ?>
-                        <?= htmlspecialchars($formulario['resposta_profissional']); ?>
-                    <?php else: ?>
-                        <em>Sem resposta</em>
-                    <?php endif; ?>
-                </td>
-                <td>
-                    <a href="responderSolicitacao.php?id=<?= $formulario['id']; ?>" class="btn">Responder</a>
+                    <a href="responderSolicitacao.php?id=<?= $servico['id']; ?>" class="btn">Responder</a>
                 </td>
             </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
-<?php else: ?>
+    <?php else: ?>
     <p>Nenhum formulário recebido ainda.</p>
-<?php endif; ?>
-           
-        </div>
+    <?php endif; ?>
+
+</div>
+
     </div>
 </div>
 </body>
