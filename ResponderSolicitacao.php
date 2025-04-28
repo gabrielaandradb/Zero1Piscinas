@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Responder Solicitação</title>
+    <title>Responder Solicitaçã</title>
 </head>
 <body>
     <h1>Responder Solicitação</h1>
