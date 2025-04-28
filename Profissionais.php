@@ -291,6 +291,7 @@ $stmt_formularios->execute();
 $formularios = $stmt_formularios->fetchAll(PDO::FETCH_ASSOC);
 ?>
         <!-- Formulários dos Clientes -->
+<<<<<<< HEAD
         <div id="formularios" class="card">
     <h2>Formulários Recebidos</h2>
 
@@ -321,6 +322,63 @@ $formularios = $stmt_formularios->fetchAll(PDO::FETCH_ASSOC);
             <a href="responderSolicitacao.php?id=<?= $formulario['id']; ?>" class="btn">Responder</a>
         </div>
         <?php endforeach; ?>
+=======
+       <!-- Formulários dos Clientes -->
+<div id="formularios" class="card">
+<h2>Formulários Recebidos</h2>
+
+<?php if (!empty($formularios)): ?>
+    <table>
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>Tamanho</th>
+                <th>Tipo</th>
+                <th>Profundidade</th>
+                <th>Data Instalação</th>
+                <th>Serviço</th>
+                <th>Foto</th>
+                <th>Resposta</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($formularios as $formulario): ?>
+            <tr>
+                <td><?= htmlspecialchars($formulario['nome_cliente']); ?></td>
+                <td><?= htmlspecialchars($formulario['tamanho']); ?></td>
+                <td><?= htmlspecialchars($formulario['tipo']); ?></td>
+                <td><?= htmlspecialchars($formulario['profundidade']); ?></td>
+                <td><?= htmlspecialchars($formulario['data_instalacao']); ?></td>
+                <td><?= htmlspecialchars($formulario['servico_desejado']); ?></td>
+                <td>
+                    <?php if (!empty($formulario['foto_piscina'])): ?>
+                        <a href="<?= htmlspecialchars($formulario['foto_piscina']); ?>" target="_blank">Ver Foto</a>
+                    <?php else: ?>
+                        Sem foto
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php if (!empty($formulario['resposta_profissional'])): ?>
+                        xs<?= htmlspecialchars($formulario['resposta_profissional']); ?>
+                    <?php else: ?>
+                        <em>Sem resposta</em>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <a href="responderFormulario.php?id=<?= $formulario['id']; ?>" class="btn">Responder</a>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php else: ?>
+    <p>Nenhum formulário recebido ainda.</p>
+<?php endif; ?>
+
+</div>
+
+>>>>>>> 9611f2b7372c33c4cb39571321a707ca7c1352de
     </div>
     <?php else: ?>
         <p>Nenhum formulário recebido ainda.</p>
