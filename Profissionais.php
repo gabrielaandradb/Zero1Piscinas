@@ -328,7 +328,7 @@ $formularios = $stmt_formularios->fetchAll(PDO::FETCH_ASSOC);
                 </td>
                 <td>
                     <?php if (!empty($formulario['resposta_profissional'])): ?>
-                        <?= htmlspecialchars($formulario['resposta_profissional']); ?>
+                        xs<?= htmlspecialchars($formulario['resposta_profissional']); ?>
                     <?php else: ?>
                         <em>Sem resposta</em>
                     <?php endif; ?>
@@ -341,7 +341,7 @@ $formularios = $stmt_formularios->fetchAll(PDO::FETCH_ASSOC);
         </tbody>
     </table>
 <?php else: ?>
-    <p>Nenhum formulário recebido ainda</p>
+    <p>Nenhum formulário recebido ainda.</p>
 <?php endif; ?>
 
 </div>
