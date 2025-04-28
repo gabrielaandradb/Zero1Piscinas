@@ -258,7 +258,7 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
             <table>
                 <thead>
                     <tr>
-                        <th>Nome</th>
+                        <th>Nom</th>
                         <th>Email</th>
                         <th>Telefone</th>
                     </tr>
