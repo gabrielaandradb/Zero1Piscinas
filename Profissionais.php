@@ -140,7 +140,7 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
         }
 
 
-        /* Cards */
+ 
         .card {
             background-color: #ffffff;
             padding: 20px;
@@ -178,7 +178,7 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
             color: #555;
         }
 
-        /* Botões */
+
         .btn, .btn-dados {
             padding: 10px 20px;
             background: #0077b6;
@@ -199,7 +199,7 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
         /* Responsividade */
         @media (max-width: 768px) {
             .container {
-            flex-direction: column;  /* Muda para uma coluna em telas pequenas */
+            flex-direction: column;  
         }  
 
         .menu {
@@ -217,7 +217,7 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
 
 <div class="container">
 
-    <!-- Menu -->
+
     <div class="menu">
         <h2>Zero1 Piscinas</h2>
         <nav>
@@ -239,8 +239,8 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <!-- Conteúdo Principal -->
     <div class="content">
+
         <!-- Cabeçalho -->
         <div class="header">
              <h1>Bem-vindo Profissional, <strong><?= htmlspecialchars($profissional['nome']); ?></strong></h1>
@@ -292,59 +292,44 @@ $formularios = $stmt_formularios->fetchAll(PDO::FETCH_ASSOC);
 ?>
         <!-- Formulários dos Clientes -->
         <div id="formularios" class="card">
-        <h2>Formulários Recebidos</h2>
+    <h2>Formulários Recebidos</h2>
 
-<?php if (!empty($formularios)): ?>
-    <table>
-        <thead>
-            <tr>
-                <th>Cliente</th>
-                <th>Tamanho</th>
-                <th>Tipo</th>
-                <th>Profundidade</th>
-                <th>Data Instalação</th>
-                <th>Serviço</th>
-                <th>Foto</th>
-                <th>Resposta</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($formularios as $formulario): ?>
-            <tr>
-                <td><?= htmlspecialchars($formulario['nome_cliente']); ?></td>
-                <td><?= htmlspecialchars($formulario['tamanho']); ?></td>
-                <td><?= htmlspecialchars($formulario['tipo']); ?></td>
-                <td><?= htmlspecialchars($formulario['profundidade']); ?></td>
-                <td><?= htmlspecialchars($formulario['data_instalacao']); ?></td>
-                <td><?= htmlspecialchars($formulario['servico_desejado']); ?></td>
-                <td>
-                    <?php if (!empty($formulario['foto_piscina'])): ?>
-                        <a href="<?= htmlspecialchars($formulario['foto_piscina']); ?>" target="_blank">Ver Foto</a>
-                    <?php else: ?>
-                        Sem foto
-                    <?php endif; ?>
-                </td>
-                <td>
-                    <?php if (!empty($formulario['resposta_profissional'])): ?>
-                        <?= htmlspecialchars($formulario['resposta_profissional']); ?>
-                    <?php else: ?>
-                        <em>Sem resposta</em>
-                    <?php endif; ?>
-                </td>
-                <td>
-                    <a href="responderSolicitacao.php?id=<?= $formulario['id']; ?>" class="btn">Responder</a>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-<?php else: ?>
-    <p>Nenhum formulário recebido ainda.</p>
-<?php endif; ?>
-           
+    <?php if (!empty($formularios)): ?>
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+        <?php foreach ($formularios as $formulario): ?>
+        <div style="flex: 1 1 calc(50% - 20px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); padding: 20px; border-radius: 10px; background-color: #f9f9f9;">
+            <p><strong>Cliente:</strong> <?= htmlspecialchars($formulario['nome_cliente']); ?></p>
+            <p><strong>Tamanho:</strong> <?= htmlspecialchars($formulario['tamanho']); ?></p>
+            <p><strong>Tipo:</strong> <?= htmlspecialchars($formulario['tipo']); ?></p>
+            <p><strong>Profundidade:</strong> <?= htmlspecialchars($formulario['profundidade']); ?></p>
+            <p><strong>Data Instalação:</strong> <?= htmlspecialchars($formulario['data_instalacao']); ?></p>
+            <p><strong>Serviço:</strong> <?= htmlspecialchars($formulario['servico_desejado']); ?></p>
+            <p><strong>Foto:</strong> 
+                <?php if (!empty($formulario['foto_piscina'])): ?>
+                    <a href="<?= htmlspecialchars($formulario['foto_piscina']); ?>" target="_blank">Ver Foto</a>
+                <?php else: ?>
+                    Sem foto
+                <?php endif; ?>
+            </p>
+            <p><strong>Resposta:</strong> 
+                <?php if (!empty($formulario['resposta_profissional'])): ?>
+                    <?= htmlspecialchars($formulario['resposta_profissional']); ?>
+                <?php else: ?>
+                    <em>Sem resposta</em>
+                <?php endif; ?>
+            </p>
+            <a href="responderSolicitacao.php?id=<?= $formulario['id']; ?>" class="btn">Responder</a>
         </div>
+        <?php endforeach; ?>
     </div>
+    <?php else: ?>
+        <p>Nenhum formulário recebido ainda.</p>
+    <?php endif; ?>
+</div>
+
+           
+        
+    
 </div>
 </body>
 </html>

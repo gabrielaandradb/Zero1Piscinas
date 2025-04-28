@@ -1,25 +1,20 @@
 <?php
 session_start();
 
-// Verifique se o usuário está logado e é um cliente
 if (!isset($_SESSION['ClassUsuarios']) || $_SESSION['ClassUsuarios']['tipo_usuario'] != 'cliente') {
     header('Location: LoginCadastro.php');
     exit;
 }
 
-include 'Conexao.php'; // Inclua seu arquivo de conexão com o banco de dados
+include 'Conexao.php'; 
 
-// Obtenha os dados do usuário da sessão
 $usuario = $_SESSION['ClassUsuarios'];
 
-// Conexão com o banco de dados
 $conexao = Conexao::getInstance();
 
-// Mensagens de sucesso ou erro
 $mensagem = '';
 $mensagemErro = '';
 
-// Verifique se o formulário foi submetido
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
     if ($_POST['acao'] === 'atualizar') {
         // Atualização de dados
@@ -37,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
         $stmt->bindParam(':id', $usuario['id'], PDO::PARAM_INT);
 
         if ($stmt->execute()) {
-            // Atualize a sessão
+
             $_SESSION['ClassUsuarios']['nome'] = $nome;
             $_SESSION['ClassUsuarios']['email'] = $email;
             $_SESSION['ClassUsuarios']['telefone'] = $telefone;

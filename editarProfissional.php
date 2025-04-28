@@ -1,26 +1,21 @@
 <?php
 session_start();
 
-// Verifique se o usuário está logado e é um profissional
 if (!isset($_SESSION['ClassUsuarios']) || $_SESSION['tipo_usuario'] != 'profissional') {
     header('Location: LoginCadastro.php');
     exit;
 }
 
-// Conexão com o banco de dados
-require_once 'Conexao.php'; // Supondo que o arquivo de conexão se chame 'Conexao.php'
+require_once 'Conexao.php'; 
 $conexao = Conexao::getInstance();
 
-// Pegue o ID do profissional da sessão
 $id_profissional = $_SESSION['ClassUsuarios'];
 
-// Consulta para pegar os dados do profissional
 $query = "SELECT * FROM usuarios WHERE id = :id_profissional AND tipo_usuario = 'profissional'";
 $stmt = $conexao->prepare($query);
 $stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
 $stmt->execute();
 
-// Verifique se os dados foram encontrados
 $profissional = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$profissional) {
@@ -28,14 +23,12 @@ if (!$profissional) {
     exit;
 }
 
-// Atualiza os dados do profissional caso o formulário seja enviado
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nome = $_POST['nome'];
     $email = $_POST['email'];
     $telefone = $_POST['telefone'];
     $endereco = $_POST['endereco'];
 
-    // Atualiza os dados no banco de dados
     $updateQuery = "UPDATE usuarios SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco WHERE id = :id_profissional";
     $stmtUpdate = $conexao->prepare($updateQuery);
     $stmtUpdate->bindParam(':nome', $nome);
@@ -45,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmtUpdate->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
 
     if ($stmtUpdate->execute()) {
-        // Redireciona de volta para o perfil após a atualização
         header('Location: Profissionais.php');
         exit;
     } else {

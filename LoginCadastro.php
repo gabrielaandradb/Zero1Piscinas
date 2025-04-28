@@ -8,37 +8,38 @@ if ($conn->connect_error) {
 $erro = '';
 $sucesso = '';
 
-
-// Verifique se o usuário já está logado
 $usuario_logado = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null;
 
-// Verifique se o formulário de login foi enviado
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['email_login']) && isset($_POST['senha_login'])) {
         $email = $_POST['email_login'];
         $senha = $_POST['senha_login'];
 
-        $sql = "SELECT * FROM usuarios WHERE email = '$email' AND senha = '$senha'";
+        $sql = "SELECT * FROM usuarios WHERE email = '$email'";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
             $usuario = $result->fetch_assoc();
-            $_SESSION['ClassUsuarios'] = $usuario;
-            $_SESSION['tipo_usuario'] = $usuario['tipo_usuario'];
+            
+            if (password_verify($senha, $usuario['senha'])) {
+                $_SESSION['ClassUsuarios'] = $usuario;
+                $_SESSION['tipo_usuario'] = $usuario['tipo_usuario'];
 
-            if ($usuario['tipo_usuario'] == 'profissional') {
-                header('Location: Profissionais.php');
-                exit;
-            } else if ($usuario['tipo_usuario'] == 'cliente') {
-                header('Location: index.php');
-                exit;
+                if ($usuario['tipo_usuario'] == 'profissional') {
+                    header('Location: Profissionais.php');
+                    exit;
+                } else if ($usuario['tipo_usuario'] == 'cliente') {
+                    header('Location: index.php');
+                    exit;
+                }
+            } else {
+                $erro = "E-mail ou senha incorretos!";
             }
         } else {
             $erro = "E-mail ou senha incorretos!";
         }
     }
 
-    // Verifique se o formulário de cadastro foi enviado
     if (isset($_POST['email_cad']) && isset($_POST['senha_cad'])) {
         $nome = $_POST['nome_cad'];
         $email = $_POST['email_cad'];
@@ -46,9 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $endereco = $_POST['endereco_cad'];
         $senha = $_POST['senha_cad'];
 
+        // Criptografando a senha antes de armazenar
+        $senha_criptografada = password_hash($senha, PASSWORD_DEFAULT);
+
         $sql = "INSERT INTO usuarios (nome, email, telefone, endereco, senha, tipo_usuario) VALUES (?, ?, ?, ?, ?, 'cliente')";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('sssss', $nome, $email, $telefone, $endereco, $senha);
+        $stmt->bind_param('sssss', $nome, $email, $telefone, $endereco, $senha_criptografada);
 
         if ($stmt->execute()) {
             $sucesso = "Cadastro realizado com sucesso! Faça login.";
@@ -58,18 +62,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $stmt->close();
     }
-       /*exclusao de conta*/
-if (isset($_GET['mensagem'])) {
-    echo '<div style="margin: 20px; padding: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px;">' . htmlspecialchars($_GET['mensagem']) . '</div>';
-}
 
-if (isset($_GET['mensagemErro'])) {
-    echo '<div style="margin: 20px; padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">' . htmlspecialchars($_GET['mensagemErro']) . '</div>';
-}
+    /* exclusao de conta */
+    if (isset($_GET['mensagem'])) {
+        echo '<div style="margin: 20px; padding: 10px; background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px;">' . htmlspecialchars($_GET['mensagem']) . '</div>';
+    }
+
+    if (isset($_GET['mensagemErro'])) {
+        echo '<div style="margin: 20px; padding: 10px; background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; border-radius: 5px;">' . htmlspecialchars($_GET['mensagemErro']) . '</div>';
+    }
 }
 
 $conn->close();
-
 ?>
 
 
@@ -85,18 +89,17 @@ $conn->close();
     <script>
         function handleCredentialResponse(response) {
             console.log("Encoded JWT ID token: " + response.credential);
-            // Aqui você pode enviar o token para o backend para validação e login.
         }
 
         window.onload = function () {
             google.accounts.id.initialize({
-                client_id: "964075037995-62drlhckrr5cfbu79ets39tpk02ei1h4.apps.googleusercontent.com", // Substitua pelo seu Client ID do Google
+                client_id: "964075037995-62drlhckrr5cfbu79ets39tpk02ei1h4.apps.googleusercontent.com", 
                 callback: handleCredentialResponse
             });
 
             google.accounts.id.renderButton(
                 document.getElementById("google-signin"),
-                { theme: "outline", size: "large" } // Personalize o botão aqui
+                { theme: "outline", size: "large" } 
             );
         };
     </script>

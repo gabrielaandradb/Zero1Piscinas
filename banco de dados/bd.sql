@@ -91,3 +91,4 @@ select*from clientes;
 select*from usuarios;
 ALTER TABLE piscinas
 ADD COLUMN resposta_profissional TEXT NULL;
+
