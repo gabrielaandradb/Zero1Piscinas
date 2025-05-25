@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        
+        {
+            "type": "msedge",
+            "name": "https://github.com/gabrielaandradb/Zero1Piscinas.git",
+            "request": "launch",
+            "url": "https://github.com/gabrielaandradb/Zero1Piscinas.git"
+        }
+    ]
+}

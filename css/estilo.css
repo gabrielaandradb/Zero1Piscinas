@@ -1,0 +1,704 @@
+
+/* Estilo geral */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom, #d0f0ff, #f0faff);
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    min-height: 100vh;
+  }
+  
+  
+  h2 {
+    font-size: 32px;
+    color: #0077b6;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  h3 {
+    font-size: 27px;
+    color: #0077b6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  
+  .p-estilo {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 25px;
+  }
+  
+  .servicos-container .btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background: #0077b6;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: background 0.3s, transform 0.3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .servicos-container .btn:hover {
+    background: #005f8a;
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .menu {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+    justify-content: right;
+  }
+  
+  .menu li a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+  }
+  
+  .menu li a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Serviços */
+  body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+  }
+  
+  .index {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+  }
+  
+  h1, h2 {
+      text-align: center;
+      color: #0077b6;
+  }
+  
+  .servicos-container h2 {
+      font-size: 2em;
+      margin-bottom: 30px;
+  }
+  
+  .servicos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      justify-items: center;
+  }
+  
+  .servico {
+      background-color: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .servico img {
+      width: 100%;
+      height: 200px; /* Ajuste a altura conforme necessário */
+      object-fit: cover; /* Garante que as imagens se ajustem ao tamanho sem distorcer */
+      border-bottom: 1px solid #ddd;
+      flex-wrap: wrap;
+      gap: 10px;
+  }
+  
+  .servico:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .servico h3 {
+      font-size: 1.5em;
+      color: #0077b6;
+      margin: 15px 0;
+  }
+  
+  
+  .servico p {
+      font-size: 0.95em;
+      padding: 10px 15px;
+      color: #333333;
+      line-height: 1.5;
+  }
+  
+  /* Responsivo */
+  @media (max-width: 768px) {
+      .servicos {
+          flex-direction: column;
+          align-items: center;
+      }
+  }
+  
+  
+  .index-container {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+   h1 {
+    font-size: 32px;
+    color: #0077b6;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .p-estilo {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 25px;
+  }
+  
+  .index-container .btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background: #0077b6;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: background 0.3s, transform 0.3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .index-container .btn:hover {
+    background: #005f8a;
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  h1 {
+      font-size: 36px;
+      color: #066a75;
+      text-align: center;
+      padding: 2px 0 20px 0;
+    }
+  
+  .btn {
+      padding: 10px 20px;
+      font-size: 12px;
+    }
+  
+  .menu {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+  }
+  
+  .menu li {
+      margin: 0;
+  }
+  
+  .menu li a {
+      text-decoration: none;
+      color: black;
+      font-weight: bold;
+  }
+  
+  .menu li a:hover {
+      text-decoration: underline;
+  }
+  
+  @media (max-width: 480px) {
+    .index-container  {
+      padding: 15px;
+    }
+  }
+  /*INDEX*/
+  
+  .index {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 155px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+    .index .btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background: #0077b6;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: background 0.3s, transform 0.3s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .index .btn:hover {
+    background: #005f8a;
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  @media (max-width: 600px) {
+    .index  {
+      padding: 15px;
+    }
+  }
+  /*LOGIN E CADASTRO*/
+  
+  
+  *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+  }
+  
+  /* Formulário centralizado */
+  .form-container {
+      width: 500px;
+      min-height: 560px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+  .form-container  label {
+      color: #333;
+      margin-bottom: 5px;
+      display: block;
+      text-align: left;
+  }
+  
+  .form-container h2 {
+      font-size: 36px;
+      color: #066a75;
+      text-align: center;
+      padding: 2px 0 20px 0;
+  }
+  
+  /* Links de navegação */
+  .form-switch {
+      text-align: center;
+      margin-bottom: 20px;
+  }
+  
+  .form-switch a {
+      color: #066a75;
+      font-weight: bold;
+  }
+  
+  /* Campos de entrada */
+  label {
+      color: #405c60;
+      display: block;
+      margin-bottom: 8px;
+  }
+  
+  input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #b2b2b2;
+      border-radius: 5px;
+      box-shadow: 0 1px 4px rgba(168, 168, 168, 0.6) inset;
+      transition: all 0.3s ease;
+  }
+  
+  input:focus {
+      border-color: #39bfd7;
+      box-shadow: 0 0 8px rgba(57, 191, 215, 0.5);
+  }
+  
+  /* Botões */
+  input[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background: #4ab3c6;
+      color: #fff;
+      font-size: 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+  }
+  
+  input[type="submit"]:hover {
+      background: #39bfd7;
+  }
+  
+  /* Link de alternância */
+  .link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 16px;
+      color: #7f7c7c;
+  }
+  
+  .link a {
+      color: #39bfd7;
+      font-weight: bold;
+      transition: color 0.3s ease;
+  }
+  
+  .link a:hover {
+      color: #066a75;
+  }
+  
+  /* Animação */
+  #cadastro, #login {
+      animation: fadeIn 0.5s ease forwards;
+  }
+  
+  @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+      .form-container {
+          width: 90%;
+          padding: 20px;
+      }
+  
+      h2 {
+          font-size: 28px;
+      }
+  }
+  
+  @media (max-width: 768px) {
+      .checkbox label {
+          font-size: 14px;
+      }
+  
+      input[type="checkbox"] {
+          width: 18px;
+          height: 18px;
+      }
+  }
+  
+  .checkbox {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+  }
+  
+  .checkbox input[type="checkbox"] {
+      margin-right: 8px;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #39bfd7; /* Altera a cor do checkbox */
+  }
+  
+  .checkbox label {
+      font-size: 16px;
+      color: #405c60;
+      cursor: pointer; /* Indica que o texto também pode ativar o checkbox */
+  }
+  
+  .saudacao {
+      font-size: 26px;
+      color: #000000; /* Preto */
+      text-align: left;
+      padding: 2px 0 20px 0;
+  }
+  
+  
+  
+  /* Página do Profissional */
+  
+  .header .user-profile p {
+      margin: 0;
+      font-size: 1.2rem;
+  }
+  
+  /* Estilo do container principal */
+  .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .titulo {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2.0rem;
+      color: #333;
+  }
+  
+  /* Estilo dos cartões */
+  .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+  }
+  
+  .card {
+      background-color: #e9f5ff;
+      border: 1px solid #cce4ff;
+      border-radius: 8px;
+      padding: 30px;
+      width: 300px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: left;
+  }
+  
+  .card h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #0056b3;
+  }
+  
+  .card p {
+      margin: 5px 0;
+      font-size: 0.9rem;
+      color: #333;
+  }
+  
+  /* Botão padrão */
+  .btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: #0056b3;
+      color: #fff;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 5px;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+  }
+  
+  .btn:hover {
+      background-color: #004494;
+      transform: scale(1.05);
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+      .cards {
+          flex-direction: column;
+          align-items: center;
+      }
+  
+      .card {
+          width: 90%;
+      }
+  }
+  
+  /* Página do Cliente */
+  
+  /* Estilo do perfil do usuário */
+  .user-profile p {
+      margin: 0;
+      font-size: 1rem;
+      color: #fff;
+  }
+  
+  
+  
+  /* Detalhes da piscina */
+  .detalhes-piscina {
+      text-align: left;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .detalhes-piscina h3 {
+      color: #0056b3;
+      margin-bottom: 15px;
+  }
+  
+  /* Labels e Inputs no formulário */
+  .detalhes-piscina label {
+      color: #333;
+      margin-bottom: 5px;
+      display: block;
+      text-align: left;
+  }
+  
+  .detalhes-piscina input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+  }
+  
+  .detalhes-piscina input:focus {
+      border-color: #0077b6;
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 119, 182, 0.5);
+  }
+  
+  /* Botão do formulário */
+  .detalhes-piscina .btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #0077b6;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+  }
+  
+  .detalhes-piscina .btn:hover {
+      background-color: #005f8a;
+      transform: scale(1.02);
+  }
+  
+  /* Mensagem de sucesso */
+  .mensagem-sucesso {
+      text-align: center;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #e6ffe6;
+      border: 1px solid #4ca2af;
+      color: #4ca2af;
+      border-radius: 5px;
+  }
+  
+  select {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      font-family: Arial, sans-serif;
+      color: #333;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      margin-bottom: 15px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  
+  select:hover {
+      border-color: #0077b6;
+      box-shadow: 0 0 5px rgba(0, 119, 182, 0.5);
+  }
+  
+  select:focus {
+      border-color: #005f8a;
+      box-shadow: 0 0 8px rgba(0, 95, 138, 0.6);
+  }
+  .hidden {
+    display: none;
+  }
+  
+ 
+.buttons-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Botões - editarClientes*/
+.btn-salvar {
+    background-color: #0077b6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-salvar:hover {
+    background-color: #005f8a;
+    transform: scale(1.05);
+}
+
+.btn-voltar {
+    background-color: #b0e0e6;
+    color: #0077b6;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-voltar:hover {
+    background-color: #0077b6;
+    color: white;
+    transform: scale(1.05);
+}
+
+
+.delete-container {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #ffe6e6;
+    border: 1px solid #ff4d4d;
+    border-radius: 10px;
+    color: #ff1a1a;
+    text-align: center;
+}
+
+
+.btn-delete {
+    background-color: #ff1a1a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-delete:hover {
+    background-color: #cc3300;
+    transform: scale(1.05);
+}
+
+
+.mensagem-sucesso {
+    margin: 20px;
+    padding: 15px;
+    background-color: rgb(47, 255, 255);
+    border: 1px solid #4ca2af;
+    border-radius: 5px;
+    color: rgb(0, 0, 0);
+    text-align: center;
+}
+
+
+ 
