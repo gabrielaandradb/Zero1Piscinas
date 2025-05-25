@@ -43,19 +43,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
             $mensagemErro = 'Erro ao atualizar as informações.';
         }
     } elseif ($_POST['acao'] === 'excluir') {
-        // Exclusão de conta
-        $sql = "DELETE FROM usuarios WHERE id = :id";
-        $stmt = $conexao->prepare($sql);
-        $stmt->bindParam(':id', $usuario['id'], PDO::PARAM_INT);
+    try {
+        $conexao->beginTransaction();
 
-        if ($stmt->execute()) {
-            session_destroy();
-            header('Location: LoginCadastro.php?mensagem=Conta excluída com sucesso.');
-            exit;
-        } else {
-            $mensagemErro = 'Erro ao excluir a conta. Tente novamente.';
-        }
+        // 1. Excluir registros relacionados na tabela `servicos`
+        $sqlServicos = "DELETE FROM servicos WHERE piscina_id IN (SELECT id FROM piscinas WHERE cliente_id = :id)";
+        $stmtServicos = $conexao->prepare($sqlServicos);
+        $stmtServicos->bindParam(':id', $usuario['id'], PDO::PARAM_INT);
+        $stmtServicos->execute();
+
+        // 2. Excluir registros relacionados na tabela `piscinas`
+        $sqlPiscinas = "DELETE FROM piscinas WHERE cliente_id = :id";
+        $stmtPiscinas = $conexao->prepare($sqlPiscinas);
+        $stmtPiscinas->bindParam(':id', $usuario['id'], PDO::PARAM_INT);
+        $stmtPiscinas->execute();
+
+        // 3. Excluir cliente da tabela `clientes`
+        $sqlClientes = "DELETE FROM clientes WHERE id = :id";
+        $stmtClientes = $conexao->prepare($sqlClientes);
+        $stmtClientes->bindParam(':id', $usuario['id'], PDO::PARAM_INT);
+        $stmtClientes->execute();
+
+        // 4. Excluir usuário da tabela `usuarios`
+        $sqlUsuarios = "DELETE FROM usuarios WHERE id = :id";
+        $stmtUsuarios = $conexao->prepare($sqlUsuarios);
+        $stmtUsuarios->bindParam(':id', $usuario['id'], PDO::PARAM_INT);
+        $stmtUsuarios->execute();
+
+        $conexao->commit();
+
+        session_destroy();
+        header('Location: LoginCadastro.php?mensagem=Conta excluída com sucesso.');
+        exit;
+    } catch (PDOException $e) {
+        $conexao->rollBack();
+        $mensagemErro = 'Erro ao excluir a conta: ' . $e->getMessage();
     }
+}
+
 }
 ?>
 

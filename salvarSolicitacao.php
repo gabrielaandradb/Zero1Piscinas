@@ -29,29 +29,9 @@ $tipo = htmlspecialchars(trim($_POST['tipo']));
 $profundidade = htmlspecialchars(trim($_POST['profundidade']));
 $dataInstalacao = htmlspecialchars(trim($_POST['dataInstalacao']));
 $servico = htmlspecialchars(trim($_POST['servico']));
-$fotoPiscina = null;
+$preco = floatval($_POST['preco']); 
 
-// Upload da foto da piscina (se enviada)
-if (!empty($_FILES['fotoPiscina']['name'])) {
-    $targetDir = 'uploads/';
-    $fotoPiscina = $targetDir . basename($_FILES['fotoPiscina']['name']);
-    $fileType = strtolower(pathinfo($fotoPiscina, PATHINFO_EXTENSION));
-    
-    // Verifica se o arquivo é uma imagem válida
-    $check = getimagesize($_FILES['fotoPiscina']['tmp_name']);
-    if ($check === false || !in_array($fileType, ['jpg', 'jpeg', 'png', 'gif'])) {
-        $_SESSION['mensagemSolicitacao'] = 'O arquivo enviado não é uma imagem válida.';
-        header('Location: Clientes.php');
-        exit;
-    }
-    
-    // Move o arquivo para o diretório de destino
-    if (!move_uploaded_file($_FILES['fotoPiscina']['tmp_name'], $fotoPiscina)) {
-        $_SESSION['mensagemSolicitacao'] = 'Erro ao fazer upload da imagem.';
-        header('Location: Clientes.php');
-        exit;
-    }
-}
+
 
 // Valida se o usuário é um cliente válido
 $verificarUsuarioStmt = $Conexao->prepare("
@@ -99,8 +79,8 @@ if (!$clienteExiste) {
 
 // Insere a solicitação na tabela `piscinas`
 $stmt = $Conexao->prepare("
-    INSERT INTO piscinas (cliente_id, tamanho, tipo, profundidade, data_instalacao, servico_desejado, foto_piscina) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO piscinas (cliente_id, tamanho, tipo, profundidade, data_instalacao, servico_desejado) 
+    VALUES (?, ?, ?, ?, ?, ?)
 ");
 
 if (!$stmt) {
@@ -109,7 +89,7 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param('issssss', $usuarioId, $tamanho, $tipo, $profundidade, $dataInstalacao, $servico, $fotoPiscina);
+$stmt->bind_param('isssss', $usuarioId, $tamanho, $tipo, $profundidade, $dataInstalacao, $servico);
 
 if ($stmt->execute()) {
     $_SESSION['mensagemSolicitacao'] = 'Solicitação registrada com sucesso!';

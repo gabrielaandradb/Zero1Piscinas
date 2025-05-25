@@ -360,28 +360,11 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
         </div>
 
         <div class="servico">
-            <img src="img/acabamentos1.png" alt="Acabamentos e Bordas">
-            <h3>Acabamentos e Bordas</h3>
-            <p>Personalize sua piscina com materiais de alta qualidade e bordas cimentícias para maior durabilidade.</p>
-        </div>
-
-        <div class="servico">
-            <img src="img/construcao1.jpg" alt="Construção e Reforma de Piscinas">
-            <h3>Construção e Reforma</h3>
-            <p>Construímos e reformamos piscinas de diferentes estilos e tamanhos para atender às suas necessidades.</p>
-        </div>
-
-        <div class="servico">
             <img src="img/capa1.jpg" alt="Instalação de Capas Protetoras">
             <h3>Instalação de Capas Protetoras</h3>
             <p>Instalamos capas de proteção de alta resistência para maior segurança e economia de limpeza.</p>
         </div>
 
-        <div class="servico">
-            <img src="img/automacao1.jpg" alt="Automação de Piscinas">
-            <h3>Automação de Piscinas</h3>
-            <p>Automatize o controle da sua piscina com sistemas modernos para iluminação, temperatura e filtragem.</p>
-        </div>
 
         <div class="servico">
             <img src="img/tratamento1.jpg" alt="Tratamento Avançado da Água">
@@ -424,39 +407,21 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
                 </tr>
                 <tr>
                     <td>Aquecimento de Piscinas</td>
-                    <td>R$ 2.000,00</td>
-                    <td>R$ 3.000,00</td>
-                    <td>R$ 4.000,00</td>
-                </tr>
-                <tr>
-                    <td>Acabamentos e Bordas</td>
-                    <td>R$ 1.000,00</td>
-                    <td>R$ 1.500,00</td>
-                    <td>R$ 2.000,00</td>
-                </tr>
-                <tr>
-                    <td>Construção e Reforma</td>
-                    <td>R$ 10.000,00</td>
-                    <td>R$ 15.000,00</td>
-                    <td>R$ 20.000,00</td>
+                    <td>R$ 600,00</td>
+                    <td>R$ 700,00</td>
+                    <td>R$ 800,00</td>
                 </tr>
                 <tr>
                     <td>Instalação de Capas Protetoras</td>
-                    <td>R$ 500,00</td>
-                    <td>R$ 800,00</td>
-                    <td>R$ 1.000,00</td>
-                </tr>
-                <tr>
-                    <td>Automação de Piscinas</td>
-                    <td>R$ 5.000,00</td>
-                    <td>R$ 7.000,00</td>
-                    <td>R$ 9.000,00</td>
+                    <td>R$ 100,00</td>
+                    <td>R$ 150,00</td>
+                    <td>R$ 200,00</td>
                 </tr>
                 <tr>
                     <td>Tratamento da Água</td>
-                    <td>R$ 800,00</td>
-                    <td>R$ 1.200,00</td>
-                    <td>R$ 1.500,00</td>
+                    <td>R$ 250,00</td>
+                    <td>R$ 350,00</td>
+                    <td>R$ 450,00</td>
                 </tr>
             </tbody>
         </table>

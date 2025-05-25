@@ -56,6 +56,16 @@ $stmt_clientes->execute();
 
 // Armazene os resultados dos clientes
 $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
+
+
+$query_usuarios = "
+    SELECT endereco 
+    FROM usuarios 
+    ORDER BY nome ASC;
+";
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -384,7 +394,6 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
                         <th>Nome</th>
                         <th>Email</th>
                         <th>Telefone</th>
-                        <th>Endereço</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -393,7 +402,6 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= htmlspecialchars($cliente['nome']); ?></td>
                         <td><?= htmlspecialchars($cliente['email']); ?></td>
                         <td><?= htmlspecialchars($cliente['telefone']); ?></td>
-                        <td><?= htmlspecialchars($cliente['endereco']); ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -419,22 +427,21 @@ $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
     <?php if (!empty($piscinas)): ?>
         <?php foreach ($piscinas as $piscina): ?>
             <div class="formulario">
+
                 <p><strong>Cliente:</strong> <?= htmlspecialchars($piscina['cliente_nome']); ?> (<?= htmlspecialchars($piscina['cliente_email']); ?>)</p>
                 <p><strong>Tamanho:</strong> <?= htmlspecialchars($piscina['tamanho']); ?></p>
                 <p><strong>Tipo:</strong> <?= htmlspecialchars($piscina['tipo']); ?></p>
                 <p><strong>Profundidade:</strong> <?= htmlspecialchars($piscina['profundidade']); ?></p>
                 <p><strong>Data de Instalação:</strong> <?= date('d/m/Y', strtotime($piscina['data_instalacao'])); ?></p>
                 <p><strong>Serviço Desejado:</strong> <?= htmlspecialchars($piscina['servico_desejado']); ?></p>
-                <p><strong>Foto:</strong> 
-                    <?php if (!empty($piscina['foto_piscina'])): ?>
-                        <a href="uploads/<?= htmlspecialchars($piscina['foto_piscina']); ?>" target="_blank">Ver Foto</a>
-                    <?php else: ?>
-                        Não disponível
-                    <?php endif; ?>
-                </p>
+                <?php foreach ($clientes as $cliente): ?>
+                <p><strong>Endereço: </strong><?= htmlspecialchars($cliente['endereco']); ?></p>
+                <?php endforeach; ?>
+                
                 <p><a href="ResponderSolicitacao.php?id=<?= $piscina['id']; ?>" class="btn">Responder</a></p>
+            
             </div>
-            <hr> <!-- Linha horizontal para separar os formulários -->
+            <hr> 
         <?php endforeach; ?>
     <?php else: ?>
         <p>Nenhuma solicitação pendente.</p>

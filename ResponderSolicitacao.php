@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt_update->execute()) {
         $query_servicos = "
             INSERT INTO servicos (piscina_id, profissional_id, tipo_servico, descricao, estatus)
-            VALUES (:piscina_id, :profissional_id, 'em_andamento', :descricao, :estatus);
+            VALUES (:piscina_id, :profissional_id, 'concluido', :descricao, :estatus);
         ";
         $stmt_servicos = $conexao->prepare($query_servicos);
         $stmt_servicos->bindParam(':piscina_id', $solicitacao_id, PDO::PARAM_INT);
@@ -99,8 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="status">Status</label>
             <select name="status" id="status" required>
                 <option value="pendente" <?= ($solicitacao['status'] === 'pendente') ? 'selected' : '' ?>>Pendente</option>
-                <option value="em_andamento" <?= ($solicitacao['status'] === 'em_andamento') ? 'selected' : '' ?>>Em andamento</option>
-                <option value="concluido" <?= ($solicitacao['status'] === 'concluido') ? 'selected' : '' ?>>Concluído</option>
+                <option value="concluido" <?= ($solicitacao['status'] === 'concluido') ? 'selected' : '' ?>>Concluido</option>
+                <option value="cancelado" <?= ($solicitacao['status'] === 'cancelado') ? 'selected' : '' ?>>Cancelado</option>
             </select>
 
             <label for="comentario">Comentário</label>

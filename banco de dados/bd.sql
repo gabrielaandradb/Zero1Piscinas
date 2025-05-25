@@ -1,4 +1,4 @@
-
+drop database Zero1Piscinas;
 CREATE DATABASE Zero1Piscinas;
 USE Zero1Piscinas;
 
@@ -27,20 +27,52 @@ CREATE TABLE profissionais (
     FOREIGN KEY (id) REFERENCES usuarios(id) 
 );
 
+
 CREATE TABLE piscinas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT,
-    tamanho VARCHAR(10),
+    tamanho ENUM('pequena', 'media', 'grande'),
     tipo VARCHAR(20),
     profundidade VARCHAR(10),
     data_instalacao DATE,
     servico_desejado VARCHAR(100),
-    foto_piscina VARCHAR(255),
-    status ENUM('pendente', 'em_andamento', 'concluido', 'cancelado') DEFAULT 'pendente',
+    status ENUM('pendente', 'concluido', 'cancelado') DEFAULT 'pendente',
     resposta TEXT,
     data_solicitacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    preco DECIMAL(10, 2),
     FOREIGN KEY (cliente_id) REFERENCES clientes(id)
 );
+
+UPDATE piscinas
+SET preco = 
+    CASE 
+        WHEN tamanho = 'pequena' AND servico_desejado = 'Limpeza de Piscinas' THEN 150.00
+        WHEN tamanho = 'media' AND servico_desejado = 'Limpeza de Piscinas' THEN 250.00
+        WHEN tamanho = 'grande' AND servico_desejado = 'Limpeza de Piscinas' THEN 350.00
+
+        WHEN tamanho = 'pequena' AND servico_desejado = 'Manutenção' THEN 200.00
+        WHEN tamanho = 'media' AND servico_desejado = 'Manutenção' THEN 300.00
+        WHEN tamanho = 'grande' AND servico_desejado = 'Manutenção' THEN 400.00
+
+        WHEN tamanho = 'pequena' AND servico_desejado = 'Reparos' THEN 300.00
+        WHEN tamanho = 'media' AND servico_desejado = 'Reparos' THEN 450.00
+        WHEN tamanho = 'grande' AND servico_desejado = 'Reparos' THEN 600.00
+
+        WHEN tamanho = 'pequena' AND servico_desejado = 'Aquecimento de Piscinas' THEN 2000.00
+        WHEN tamanho = 'media' AND servico_desejado = 'Aquecimento de Piscinas' THEN 3000.00
+        WHEN tamanho = 'grande' AND servico_desejado = 'Aquecimento de Piscinas' THEN 4000.00
+
+        WHEN tamanho = 'pequena' AND servico_desejado = 'Instalação de Capas Protetoras' THEN 500.00
+        WHEN tamanho = 'media' AND servico_desejado = 'Instalação de Capas Protetoras' THEN 800.00
+        WHEN tamanho = 'grande' AND servico_desejado = 'Instalação de Capas Protetoras' THEN 1000.00
+
+        WHEN tamanho = 'pequena' AND servico_desejado = 'Tratamento da Água' THEN 800.00
+        WHEN tamanho = 'media' AND servico_desejado = 'Tratamento da Água' THEN 1200.00
+        WHEN tamanho = 'grande' AND servico_desejado = 'Tratamento da Água' THEN 1500.00
+        ELSE 0.00
+    END;
+SET SQL_SAFE_UPDATES = 1;
+
 
 CREATE TABLE servicos (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -67,20 +99,45 @@ CREATE TABLE pagamentos (
     FOREIGN KEY (servico_id) REFERENCES servicos(id)
 );
 
-
 INSERT INTO clientes (id) 
 SELECT id FROM usuarios WHERE tipo_usuario = 'cliente';
+
 
 select*from profissionais;
 select*from clientes;
 
-select*from usuarios;
+SELECT 
+    s.id, 
+    s.tipo_servico, 
+    s.descricao, 
+    s.estatus, 
+    s.preco, 
+    s.data_solicitacao, 
+    s.data_execucao, 
+    p.tamanho, 
+    p.tipo AS tipo_piscina, 
+    u.nome AS cliente_nome, 
+    u.email AS cliente_email
+FROM servicos s
+JOIN piscinas p ON s.piscina_id = p.id
+JOIN usuarios u ON p.cliente_id = u.id
+WHERE s.id = 1 
+AND s.profissional_id = 2;
 
-$query_piscinas = "
-    SELECT piscina.id, cliente.nome AS cliente_nome, cliente.email AS cliente_email, cliente.endereco AS cliente_endereco, 
-           piscina.tamanho, piscina.tipo, piscina.profundidade, piscina.data_instalacao, piscina.servico_desejado, piscina.data_solicitacao
-    FROM piscinas
-    JOIN usuarios AS cliente ON piscina.id_cliente = cliente.id
-    WHERE piscina.status = 'pendente'
-    ORDER BY piscina.data_solicitacao DESC
-";
+SELECT * FROM piscinas WHERE id;
+
+SELECT * FROM profissionais WHERE id = 2;
+insert into profissionais values
+(1, null,null),
+(2, null,null),
+(3, null,null);
+
+SELECT * FROM piscinas;
+
+ALTER TABLE clientes
+DROP FOREIGN KEY clientes_ibfk_1;
+
+ALTER TABLE clientes
+ADD CONSTRAINT clientes_ibfk_1 FOREIGN KEY (id) REFERENCES usuarios(id) ON DELETE CASCADE;
+
+

@@ -24,5 +24,19 @@ function mostrarCadastro() {
     return nome && email && senha;
   }
   
+function calcularValor() {
+    const tamanho = tamanhoSelect.value;
+    const servico = servicoSelect.value;
+
+    if (tamanho && servico && tabelaPrecos[servico] && tabelaPrecos[servico][tamanho]) {
+        const valor = tabelaPrecos[servico][tamanho];
+        valorServicoDisplay.textContent = `Valor do Serviço: R$ ${valor.toFixed(2).replace('.', ',')}`;
+        document.getElementById('preco').value = valor; // Atualiza o campo oculto
+    } else {
+        valorServicoDisplay.textContent = '';
+        document.getElementById('preco').value = ''; // Limpa o valor caso a seleção seja inválida
+    }
+}
+
 
   

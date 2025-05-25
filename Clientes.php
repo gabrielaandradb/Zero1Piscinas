@@ -1,10 +1,11 @@
 <?php
 session_start();
+require_once 'Conexao.php';
 
-// Exemplo: Recebendo id via GET e setando na sessão
+// Exemplo para configurar a sessão com base em uma piscina selecionada
 if (isset($_GET['piscina_id'])) {
-    $_SESSION['piscina_id'] = (int) $_GET['piscina_id'];
-    header("Location: acompanharServico.php");
+    $_SESSION['piscina_id'] = intval($_GET['piscina_id']);
+    header('Location: acompanharServico.php');
     exit;
 }
 
@@ -13,9 +14,11 @@ if (!isset($_SESSION['ClassUsuarios']) || $_SESSION['tipo_usuario'] != 'cliente'
     exit;
 }
 
-// restante do seu código...
 $mensagemSolicitacao = isset($_SESSION['mensagemSolicitacao']) ? $_SESSION['mensagemSolicitacao'] : '';
 unset($_SESSION['mensagemSolicitacao']);
+
+$infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION['ClassUsuarios']['endereco']);
+
 ?>
 
 <!DOCTYPE html>
@@ -220,20 +223,18 @@ unset($_SESSION['mensagemSolicitacao']);
             vertical-align: middle;
             margin-left: 10px;
         }
+        
     </style>
     
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const tabelaPrecos = {
-            "Limpeza de Piscinas": { "Pequena": 150, "Média": 250, "Grande": 350 },
-            "Manutenção": { "Pequena": 200, "Média": 300, "Grande": 400 },
-            "Reparos": { "Pequena": 300, "Média": 450, "Grande": 600 },
-            "Aquecimento de Piscinas": { "Pequena": 2000, "Média": 3000, "Grande": 4000 },
-            "Acabamentos e Bordas": { "Pequena": 1000, "Média": 1500, "Grande": 2000 },
-            "Construção e Reforma de Piscinas": { "Pequena": 10000, "Média": 15000, "Grande": 20000 },
-            "Instalação de Capas Protetoras": { "Pequena": 500, "Média": 800, "Grande": 1000 },
-            "Automatização de Piscinas": { "Pequena": 5000, "Média": 7000, "Grande": 9000 },
-            "Tratamento Avançado da Água": { "Pequena": 800, "Média": 1200, "Grande": 1500 }
+            "Limpeza de Piscinas": { "pequena": 150, "media": 250, "grande": 350 },
+            "Manutenção": { "pequena": 200, "media": 300, "grande": 400 },
+            "Reparos": { "pequena": 300, "media": 450, "grande": 600 },
+            "Aquecimento de Piscinas": { "pequena": 600, "media": 700, "grande": 800 },
+            "Instalação de Capas Protetoras": { "pequena": 100, "media": 150, "grande": 200 },
+            "Tratamento Avançado da Água": { "pequena": 250, "media": 350, "grande": 450 }
         };
 
         const tamanhoSelect = document.getElementById('tamanho');
@@ -273,7 +274,6 @@ unset($_SESSION['mensagemSolicitacao']);
         <ul>
             <li><a href="index.php">Voltar</a></li>
             <li><a href="acompanharServico.php">Acompanhar Serviço</a></li>
-            <li><a href="acompanharServico.php">Realizar pagamento</a></li>
         </ul>
 
         <!-- Seção Meus Dados -->
@@ -283,6 +283,14 @@ unset($_SESSION['mensagemSolicitacao']);
             <p><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['email']); ?></p>
             <p><strong>Telefone:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['telefone']); ?></p>
             <p><strong>Endereço:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['endereco']); ?></p>
+
+            <?php 
+    // Verifica se telefone ou endereco estão vazios
+    if (empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION['ClassUsuarios']['endereco'])): ?>
+        <p style="color: red; font-weight: bold; margin-top: 10px;">
+            Informações pendentes. Por favor, complete seus dados.
+        </p>
+    <?php endif; ?>
             <button class="btn" onclick="window.location.href='editarClientes.php';">
                 <img src="img/editar-usuario.png" alt="Editar-usuario">  Editar Informações</button>
         </div>
@@ -313,9 +321,9 @@ unset($_SESSION['mensagemSolicitacao']);
                 <label for="tamanho">Tamanho da Piscina:</label>
                 <select id="tamanho" name="tamanho" required>
                     <option value=""></option>
-                    <option value="Pequena">Pequena</option>
-                    <option value="Média">Média</option>
-                    <option value="Grande">Grande</option>
+                    <option value="pequena">Pequena (até 10m²)</option>
+                    <option value="media">Média (até 25m²)</option>
+                    <option value="grande">Grande (acima de 25m²)</option>
                 </select>
                 <label for="tipo">Tipo de Piscina:</label>
                 
@@ -342,23 +350,21 @@ unset($_SESSION['mensagemSolicitacao']);
                     <option value="Manutenção">Manutenção</option>
                     <option value="Reparos">Reparos</option>
                     <option value="Aquecimento de Piscinas">Aquecimento de Piscinas</option>
-                    <option value="Acabamentos e Bordas">Acabamentos e Bordas</option>
-                    <option value="Construção e Reforma de Piscinas">Construção ou Reforma</option>
                     <option value="Instalação de Capas Protetoras">Instalação de Capas Protetoras</option>
-                    <option value="Automatização de Piscinas">Automatização</option>
                     <option value="Tratamento Avançado da Água">Tratamento da Água</option>
                 </select>
-
-                <label for="fotoPiscina">Foto da Piscina: <br>*opcional</label>
-
-                <input type="file" id="fotoPiscina" name="fotoPiscina" accept="image/*">
-
+                <input type="hidden" id="preco" name="preco">
 
                 
                 <br><br>
-                <button type="submit" class="btn">Solicitar Serviço</button>
-                
-            </form>
+                <?php if ($infoPendente): ?>
+        <p style="color: red; font-weight: bold;">
+            Você não pode solicitar um serviço até completar seu telefone e endereço.
+        </p>
+    <?php endif; ?>
+
+    <button type="submit" class="btn" <?php echo $infoPendente ? 'disabled' : ''; ?>>Solicitar Serviço</button>
+</form>
             
             <div class="actions">
 
