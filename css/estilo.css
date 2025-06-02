@@ -43,7 +43,6 @@ body {
     font-weight: bold;
     text-decoration: none;
     border-radius: 30px;
-    transition: background 0.3s, transform 0.3s;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
   
@@ -114,7 +113,7 @@ body {
   
   .servico img {
       width: 100%;
-      height: 200px; /* Ajuste a altura conforme necessário */
+      height: 200px; 
       object-fit: cover; /* Garante que as imagens se ajustem ao tamanho sem distorcer */
       border-bottom: 1px solid #ddd;
       flex-wrap: wrap;
@@ -183,7 +182,6 @@ body {
     font-weight: bold;
     text-decoration: none;
     border-radius: 30px;
-    transition: background 0.3s, transform 0.3s;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
   
@@ -253,7 +251,6 @@ body {
     font-weight: bold;
     text-decoration: none;
     border-radius: 30px;
-    transition: background 0.3s, transform 0.3s;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
   
@@ -277,7 +274,7 @@ body {
       font-family: Arial, sans-serif;
   }
   
-  /* Formulário centralizado */
+ 
   .form-container {
       width: 500px;
       min-height: 560px;
@@ -369,7 +366,7 @@ body {
       color: #066a75;
   }
   
-  /* Animação */
+
   #cadastro, #login {
       animation: fadeIn 0.5s ease forwards;
   }
@@ -413,18 +410,18 @@ body {
       width: 20px;
       height: 20px;
       cursor: pointer;
-      accent-color: #39bfd7; /* Altera a cor do checkbox */
+      accent-color: #39bfd7; 
   }
   
   .checkbox label {
       font-size: 16px;
       color: #405c60;
-      cursor: pointer; /* Indica que o texto também pode ativar o checkbox */
+      cursor: pointer; 
   }
   
   .saudacao {
       font-size: 26px;
-      color: #000000; /* Preto */
+      color: #000000; 
       text-align: left;
       padding: 2px 0 20px 0;
   }
@@ -438,7 +435,6 @@ body {
       font-size: 1.2rem;
   }
   
-  /* Estilo do container principal */
   .container {
       max-width: 1200px;
       margin: 20px auto;
@@ -485,7 +481,6 @@ body {
       color: #333;
   }
   
-  /* Botão padrão */
   .btn {
       display: inline-block;
       margin-top: 10px;
@@ -519,7 +514,6 @@ body {
   
   /* Página do Cliente */
   
-  /* Estilo do perfil do usuário */
   .user-profile p {
       margin: 0;
       font-size: 1rem;
@@ -542,7 +536,6 @@ body {
       margin-bottom: 15px;
   }
   
-  /* Labels e Inputs no formulário */
   .detalhes-piscina label {
       color: #333;
       margin-bottom: 5px;
@@ -565,7 +558,6 @@ body {
       box-shadow: 0 0 5px rgba(0, 119, 182, 0.5);
   }
   
-  /* Botão do formulário */
   .detalhes-piscina .btn {
       width: 100%;
       padding: 12px;

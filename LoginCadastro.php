@@ -52,7 +52,7 @@ $tipo_usuario = (str_ends_with($email, '@profissional.com')) ? 'profissional' : 
                 $erro = "E-mail ou senha incorretos!";
             }
         } else {
-            $erro = "Profissional não encontrado!";
+            $erro = "Usuário não encontrado!";
         }
 
         $stmt->close();
@@ -99,6 +99,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
     <title>Login/Cadastro</title>
     <link rel="stylesheet" href="css/estilo.css">
     <script src="js/script.js" defer></script>
@@ -147,46 +148,42 @@ $conn->close();
     </script>
  
     <script async defer crossorigin="anonymous" src="https://connect.facebook.net/pt_BR/sdk.js"></script>
-<script>
-    // API LOGIN COM FACEBOOK
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '669538649268923', // coloque aqui seu App ID do Facebook
-      cookie     : true,
-      xfbml      : true,
-      version    : 'v15.0'
-    });
-  };
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '669538649268923', 
+                cookie: true,
+                xfbml: true,
+                version: 'v15.0'
+            });
+        };
 
-  function loginFacebook() {
-    FB.login(function(response) {
-  if (response.authResponse) {
-    const accessToken = response.authResponse.accessToken;
+        function loginFacebook() {
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    const accessToken = response.authResponse.accessToken;
 
-    // Envia o token para o backend validar e logar
-    fetch('login_facebook.php', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ token: accessToken })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert('Login com Facebook bem-sucedido!');
-        window.location.href = data.redirect || 'index.php';
-      } else {
-        alert('Erro no login com Facebook: ' + data.message);
-      }
-    })
-    .catch(err => console.error('Erro ao fazer login com Facebook:', err));
-  } else {
-    alert('Login com Facebook cancelado ou falhou.');
-  }
-}, {scope: 'email', auth_type: 'reauthenticate'});  // <-- aqui
-
-  }
-</script>
-
+                    fetch('login_facebook.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ token: accessToken })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Login com Facebook bem-sucedido!');
+                            window.location.href = data.redirect || 'index.php';
+                        } else {
+                            alert('Erro no login com Facebook: ' + data.message);
+                        }
+                    })
+                    .catch(err => console.error('Erro ao fazer login com Facebook:', err));
+                } else {
+                    alert('Login com Facebook cancelado ou falhou.');
+                }
+            }, { scope: 'email', auth_type: 'reauthenticate' });
+        }
+    </script>
 </head>
 <body>
     <div class="form-container">

@@ -202,6 +202,49 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
             text-align: center;
         }
 
+        #perfil {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            width: 100%; /* Garante que ele se adapte ao layout */
+            max-width: 1200px; /* Limita o tamanho máximo */
+        }
+
+        #perfil h2 {
+            font-size: 22px;
+            color: #0077b6;
+            margin-bottom: 15px;
+            text-align: center; /* Centraliza o título dentro do card */
+        }
+
+        #perfil p {
+            font-size: 16px;
+            color: #374151;
+            line-height: 1.5;
+        }
+
+        #perfil .btn-dados {
+            display: block;
+            margin: 20px auto; /* Centraliza o botão */
+            padding: 10px 20px;
+            background-color: #0077b6;
+            color: #ffffff;
+            font-size: 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #perfil .btn-dados:hover {
+            background-color: #005f8a;
+            transform: scale(1.05);
+        }
+
         h2 img {
             width: 60px;
             height: 60px;
@@ -215,7 +258,6 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
             vertical-align: middle;
             margin-left: 10px;
         }
-
 
         a img {
             width: 20px;
@@ -276,8 +318,8 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
             <li><a href="acompanharServico.php">Acompanhar Serviço</a></li>
         </ul>
 
-        <!-- Seção Meus Dados -->
-        <div id="meus-dados" class="card">
+        <!-- Meus Dados -->
+        <div id="perfil" class="card">
             <h2>Meus Dados</h2>
             <p><strong>Nome:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['nome']); ?></p>
             <p><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['email']); ?></p>

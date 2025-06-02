@@ -62,6 +62,32 @@ function getCategoriaTamanho($tamanho) {
         return 'grande';
     }
 }
+$ordem = 'ASC'; // ou 'DESC', dependendo da ordem desejada.
+
+$query_piscinas = "
+    SELECT 
+        p.id,
+        u.nome AS cliente_nome,
+        u.email AS cliente_email,
+        u.endereco AS cliente_endereco,
+        p.tamanho,
+        p.tipo,
+        p.profundidade,
+        p.data_instalacao,
+        p.servico_desejado,
+        p.status,
+        p.preco
+    FROM piscinas p
+    JOIN usuarios u ON p.cliente_id = u.id
+    WHERE p.status = 'pendente' AND p.cliente_id = :cliente_id
+    ORDER BY p.data_solicitacao $ordem;
+";
+
+$stmt_piscinas = $conexao->prepare($query_piscinas);
+$stmt_piscinas->bindParam(':cliente_id', $_SESSION['ClassUsuarios']['id'], PDO::PARAM_INT);
+$stmt_piscinas->execute();
+$piscinas = $stmt_piscinas->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -69,6 +95,7 @@ function getCategoriaTamanho($tamanho) {
 <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="css/estilo.css">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
     <title>Minhas Piscinas e Serviços</title>
     <style>
         * {
@@ -244,6 +271,49 @@ function getCategoriaTamanho($tamanho) {
             text-align: center;
         }
 
+        #perfil {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            width: 100%; /* Garante que ele se adapte ao layout */
+            max-width: 1200px; /* Limita o tamanho máximo */
+        }
+
+        #perfil h2 {
+            font-size: 22px;
+            color: #0077b6;
+            margin-bottom: 15px;
+            text-align: center; /* Centraliza o título dentro do card */
+        }
+
+        #perfil p {
+            font-size: 16px;
+            color: #374151;
+            line-height: 1.5;
+        }
+
+        #perfil .btn-dados {
+            display: block;
+            margin: 20px auto; /* Centraliza o botão */
+            padding: 10px 20px;
+            background-color: #0077b6;
+            color: #ffffff;
+            font-size: 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #perfil .btn-dados:hover {
+            background-color: #005f8a;
+            transform: scale(1.05);
+        }
+
         h2 img {
             width: 60px;
             height: 60px;
@@ -277,8 +347,8 @@ function getCategoriaTamanho($tamanho) {
                 <li><a href="Clientes.php">Voltar</a></li>
                 <li><a href="Clientes.php">Voltar</a></li>
             </ul>
-            <!-- Seção Meus Dados -->
-        <div id="meus-dados" class="card">
+            <!-- Meus Dados -->
+        <div id="perfil" class="card">
             <h2>Meus Dados</h2>
             <p><strong>Nome:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['nome']); ?></p>
             <p><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['email']); ?></p>
@@ -292,6 +362,7 @@ function getCategoriaTamanho($tamanho) {
         <div>
             <div class="header">
                 <h1>Acompanhar Serviço</h1>
+                
                 <div class="header-text"><br>
              <p class="welcome" >Aqui você pode gerenciar suas informações e acompanhar os serviços.</p>
                 </div>
@@ -303,10 +374,8 @@ function getCategoriaTamanho($tamanho) {
                 </div>
             <?php else: ?>
                 <?php foreach ($piscinas as $piscina): ?>
-                    <div class="card">
-                        
-                        
-                        <h3 class="servicos-title">Serviços solicitados:</h3>
+                    <div id="formularios" class="card">
+            <h3 class="servicos-title">Serviços solicitados:</h3>
                         <?php
                         $sqlServicos = "SELECT tipo_servico, descricao, estatus, data_execucao, preco FROM servicos WHERE piscina_id = :piscina_id ORDER BY data_solicitacao DESC";
                         $stmtServicos = $conexao->prepare($sqlServicos);
@@ -314,6 +383,21 @@ function getCategoriaTamanho($tamanho) {
                         $stmtServicos->execute();
                         $servicos = $stmtServicos->fetchAll(PDO::FETCH_ASSOC);
                         ?>
+                        
+                        
+            <p><strong>Cliente:</strong> <?= htmlspecialchars($piscina['cliente_nome']); ?> (<?= htmlspecialchars($piscina['cliente_email']); ?>)</p>
+            <p><strong>Endereço:</strong> 
+                <?= !empty($piscina['cliente_endereco']) 
+                    ? htmlspecialchars($piscina['cliente_endereco']) 
+                    : 'Endereço não informado'; ?>
+            </p>
+            <p><strong>Tamanho:</strong> <?= htmlspecialchars($piscina['tamanho']); ?></p>
+            <p><strong>Tipo:</strong> <?= htmlspecialchars($piscina['tipo']); ?></p>
+            <p><strong>Profundidade:</strong> <?= htmlspecialchars($piscina['profundidade']); ?></p>
+            <p><strong>Data de instalação desejada:</strong> <?= date('d/m/Y', strtotime($piscina['data_instalacao'])); ?></p>
+            <p><strong>Serviço desejado:</strong> <?= htmlspecialchars($piscina['servico_desejado']); ?></p>
+                    <br>
+
                         <?php if (count($servicos) === 0): ?>
                             <p>Sem resposta do profissional, aguarde!</p>
                         <?php else: ?>

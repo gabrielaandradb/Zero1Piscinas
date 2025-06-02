@@ -2,7 +2,7 @@
 session_start();
 
 // Verifique se o profissional está logado
-if (!isset($_SESSION['ClassUsuarios']) || $_SESSION['tipo_usuario'] != 'profissional') {
+if (!isset($_SESSION['ClassUsuarios']) || $_SESSION['tipo_usuario'] !== 'profissional') {
     header('Location: LoginCadastro.php');
     exit;
 }
@@ -13,6 +13,14 @@ $conexao = Conexao::getInstance();
 $solicitacao_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 if (!$solicitacao_id) {
     echo "ID de solicitação inválido!";
+    exit;
+}
+
+// Obter o ID do profissional logado
+$profissional_id = $_SESSION['ClassUsuarios']['id'];
+
+if (!$profissional_id) {
+    echo "Erro: ID do profissional não encontrado na sessão.";
     exit;
 }
 
@@ -42,6 +50,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
     $comentario = filter_input(INPUT_POST, 'comentario', FILTER_SANITIZE_STRING);
 
+    try {
+    // Validar se o profissional existe na tabela profissionais
+    $query_profissional = "SELECT id FROM profissionais WHERE id = :profissional_id";
+    $stmt_profissional = $conexao->prepare($query_profissional);
+    $stmt_profissional->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
+    $stmt_profissional->execute();
+
+    // Criar o profissional se ele não existir
+    if ($stmt_profissional->rowCount() === 0) {
+        $query_inserir_profissional = "
+            INSERT INTO profissionais (id, nome, ...)
+            VALUES (:profissional_id, :nome, ...);
+        ";
+        $stmt_inserir = $conexao->prepare($query_inserir_profissional);
+        $stmt_inserir->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
+        $stmt_inserir->bindParam(':nome', $_SESSION['ClassUsuarios']['nome'], PDO::PARAM_STR);
+        // Inclua outros campos obrigatórios
+        $stmt_inserir->execute();
+    }
+
+    $conexao->beginTransaction();
+
+    // Atualizar a tabela piscinas
     $query_update = "
         UPDATE piscinas 
         SET status = :status, resposta = :resposta
@@ -51,34 +82,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt_update->bindParam(':status', $status);
     $stmt_update->bindParam(':resposta', $comentario);
     $stmt_update->bindParam(':solicitacao_id', $solicitacao_id, PDO::PARAM_INT);
+    $stmt_update->execute();
 
-    if ($stmt_update->execute()) {
-        $query_servicos = "
-            INSERT INTO servicos (piscina_id, profissional_id, tipo_servico, descricao, estatus)
-            VALUES (:piscina_id, :profissional_id, 'concluido', :descricao, :estatus);
-        ";
-        $stmt_servicos = $conexao->prepare($query_servicos);
-        $stmt_servicos->bindParam(':piscina_id', $solicitacao_id, PDO::PARAM_INT);
-        $stmt_servicos->bindParam(':profissional_id', $_SESSION['ClassUsuarios']['id'], PDO::PARAM_INT);
-        $stmt_servicos->bindParam(':descricao', $comentario, PDO::PARAM_STR);
-        $stmt_servicos->bindParam(':estatus', $status, PDO::PARAM_STR);
-        $stmt_servicos->execute();
+    // Inserir na tabela servicos
+    $query_servicos = "
+        INSERT INTO servicos (piscina_id, profissional_id, tipo_servico, descricao, estatus)
+        VALUES (:piscina_id, :profissional_id, 'concluido', :descricao, :estatus);
+    ";
+    $stmt_servicos = $conexao->prepare($query_servicos);
+    $stmt_servicos->bindParam(':piscina_id', $solicitacao_id, PDO::PARAM_INT);
+    $stmt_servicos->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
+    $stmt_servicos->bindParam(':descricao', $comentario, PDO::PARAM_STR);
+    $stmt_servicos->bindParam(':estatus', $status, PDO::PARAM_STR);
+    $stmt_servicos->execute();
 
-        $mensagem_sucesso = "Resposta enviada com sucesso!";
-        // Atualizar a solicitação para refletir os novos dados
-        $solicitacao['status'] = $status;
-        $solicitacao['resposta'] = $comentario;
-    } else {
-        $mensagem_erro = "Erro ao enviar a resposta.";
+    $conexao->commit();
+
+    $mensagem_sucesso = "Resposta enviada com sucesso!";
+    $solicitacao['status'] = $status;
+    $solicitacao['resposta'] = $comentario;
+} catch (Exception $e) {
+    if ($conexao->inTransaction()) {
+        $conexao->rollBack();
     }
+    $mensagem_erro = "Erro ao enviar a resposta: " . $e->getMessage();
+}
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
     <title>Responder Solicitação</title>
     <link rel="stylesheet" href="css/estilo.css" />
 </head>
@@ -87,9 +126,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2>Responder Solicitação</h2>
 
         <?php if ($mensagem_sucesso): ?>
-            <p style="color: green; font-weight: bold;"><?= htmlspecialchars($mensagem_sucesso) ?></p>
+            <p style="color: green; font-weight: bold;">
+                <?= htmlspecialchars($mensagem_sucesso) ?>
+            </p>
         <?php elseif ($mensagem_erro): ?>
-            <p style="color: red; font-weight: bold;"><?= htmlspecialchars($mensagem_erro) ?></p>
+            <p style="color: red; font-weight: bold;">
+                <?= htmlspecialchars($mensagem_erro) ?>
+            </p>
         <?php endif; ?>
 
         <p><strong>Cliente:</strong> <?= htmlspecialchars($solicitacao['cliente_nome']) ?></p>
@@ -98,16 +141,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="POST" action="">
             <label for="status">Status</label>
             <select name="status" id="status" required>
-                <option value="pendente" <?= ($solicitacao['status'] === 'pendente') ? 'selected' : '' ?>>Pendente</option>
-                <option value="concluido" <?= ($solicitacao['status'] === 'concluido') ? 'selected' : '' ?>>Concluido</option>
+                <option value="pendente" >Pendente</option>
+                <option value="concluido" <?= ($solicitacao['status'] === 'concluido') ? 'selected' : '' ?>>Concluído</option>
                 <option value="cancelado" <?= ($solicitacao['status'] === 'cancelado') ? 'selected' : '' ?>>Cancelado</option>
             </select>
 
             <label for="comentario">Comentário</label>
-            <textarea name="comentario" id="comentario" rows="5"><?= htmlspecialchars($solicitacao['resposta'] ?? '') ?></textarea>
+            <textarea name="comentario" id="comentario" rows="5" required>
+                <?= htmlspecialchars($solicitacao['resposta'] ?? '') ?>
+            </textarea>
 
             <input type="submit" value="Enviar" />
         </form>
     </div>
+    
 </body>
 </html>

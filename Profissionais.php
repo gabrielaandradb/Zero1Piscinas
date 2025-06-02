@@ -57,13 +57,31 @@ $stmt_clientes->execute();
 // Armazene os resultados dos clientes
 $clientes = $stmt_clientes->fetchAll(PDO::FETCH_ASSOC);
 
+$ordem = isset($_GET['ordem']) && $_GET['ordem'] === 'ASC' ? 'ASC' : 'DESC';
 
-$query_usuarios = "
-    SELECT endereco 
-    FROM usuarios 
-    ORDER BY nome ASC;
+// Consulta para pegar piscinas com o endereço do cliente
+$query_piscinas = "
+    SELECT 
+        p.id,
+        u.nome AS cliente_nome,
+        u.email AS cliente_email,
+        u.endereco AS cliente_endereco,
+        p.tamanho,
+        p.tipo,
+        p.profundidade,
+        p.data_instalacao,
+        p.servico_desejado,
+        p.status,
+        p.preco
+    FROM piscinas p
+    JOIN usuarios u ON p.cliente_id = u.id
+    WHERE p.status = 'pendente'
+    ORDER BY p.data_solicitacao $ordem;
 ";
 
+$stmt_piscinas = $conexao->prepare($query_piscinas);
+$stmt_piscinas->execute();
+$piscinas = $stmt_piscinas->fetchAll(PDO::FETCH_ASSOC);
 
 
 ?>
@@ -72,6 +90,7 @@ $query_usuarios = "
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
     <title>Gerenciamento - Profissional</title>
     <link rel="stylesheet" href="css/estilo.css">
     <style>
@@ -425,27 +444,27 @@ $query_usuarios = "
 <hr><br>
 
     <?php if (!empty($piscinas)): ?>
-        <?php foreach ($piscinas as $piscina): ?>
-            <div class="formulario">
+    <?php foreach ($piscinas as $piscina): ?>
+        <div class="formulario">
+            <p><strong>Cliente:</strong> <?= htmlspecialchars($piscina['cliente_nome']); ?> (<?= htmlspecialchars($piscina['cliente_email']); ?>)</p>
+            <p><strong>Endereço:</strong> 
+                <?= !empty($piscina['cliente_endereco']) 
+                    ? htmlspecialchars($piscina['cliente_endereco']) 
+                    : 'Endereço não informado'; ?>
+            </p>
+            <p><strong>Tamanho:</strong> <?= htmlspecialchars($piscina['tamanho']); ?></p>
+            <p><strong>Tipo:</strong> <?= htmlspecialchars($piscina['tipo']); ?></p>
+            <p><strong>Profundidade:</strong> <?= htmlspecialchars($piscina['profundidade']); ?></p>
+            <p><strong>Data de instalação desejada:</strong> <?= date('d/m/Y', strtotime($piscina['data_instalacao'])); ?></p>
+            <p><strong>Serviço desejado:</strong> <?= htmlspecialchars($piscina['servico_desejado']); ?></p>
+            <p><a href="ResponderSolicitacao.php?id=<?= $piscina['id']; ?>" class="btn">Responder</a></p>
+        </div>
+        <hr>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p>Nenhuma solicitação pendente.</p>
+<?php endif; ?>
 
-                <p><strong>Cliente:</strong> <?= htmlspecialchars($piscina['cliente_nome']); ?> (<?= htmlspecialchars($piscina['cliente_email']); ?>)</p>
-                <p><strong>Tamanho:</strong> <?= htmlspecialchars($piscina['tamanho']); ?></p>
-                <p><strong>Tipo:</strong> <?= htmlspecialchars($piscina['tipo']); ?></p>
-                <p><strong>Profundidade:</strong> <?= htmlspecialchars($piscina['profundidade']); ?></p>
-                <p><strong>Data de Instalação:</strong> <?= date('d/m/Y', strtotime($piscina['data_instalacao'])); ?></p>
-                <p><strong>Serviço Desejado:</strong> <?= htmlspecialchars($piscina['servico_desejado']); ?></p>
-                <?php foreach ($clientes as $cliente): ?>
-                <p><strong>Endereço: </strong><?= htmlspecialchars($cliente['endereco']); ?></p>
-                <?php endforeach; ?>
-                
-                <p><a href="ResponderSolicitacao.php?id=<?= $piscina['id']; ?>" class="btn">Responder</a></p>
-            
-            </div>
-            <hr> 
-        <?php endforeach; ?>
-    <?php else: ?>
-        <p>Nenhuma solicitação pendente.</p>
-    <?php endif; ?>
 </div>
 
 

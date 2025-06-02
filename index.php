@@ -12,7 +12,9 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
     <meta charset="UTF-8">
     <title>Zero1 Piscinas</title>
     <link rel="stylesheet" href="css/estilo.css">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <style>
         * {
             margin: 0;

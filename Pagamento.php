@@ -39,6 +39,7 @@ if (!$servico) {
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/estilo.css">
+    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
     <title>Pagamento</title>
     <style>
         body {

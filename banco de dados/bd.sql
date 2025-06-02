@@ -1,4 +1,3 @@
-drop database Zero1Piscinas;
 CREATE DATABASE Zero1Piscinas;
 USE Zero1Piscinas;
 
@@ -43,6 +42,9 @@ CREATE TABLE piscinas (
     FOREIGN KEY (cliente_id) REFERENCES clientes(id)
 );
 
+
+
+SET SQL_SAFE_UPDATES = 0;
 UPDATE piscinas
 SET preco = 
     CASE 
@@ -58,20 +60,19 @@ SET preco =
         WHEN tamanho = 'media' AND servico_desejado = 'Reparos' THEN 450.00
         WHEN tamanho = 'grande' AND servico_desejado = 'Reparos' THEN 600.00
 
-        WHEN tamanho = 'pequena' AND servico_desejado = 'Aquecimento de Piscinas' THEN 2000.00
-        WHEN tamanho = 'media' AND servico_desejado = 'Aquecimento de Piscinas' THEN 3000.00
-        WHEN tamanho = 'grande' AND servico_desejado = 'Aquecimento de Piscinas' THEN 4000.00
+        WHEN tamanho = 'pequena' AND servico_desejado = 'Aquecimento de Piscinas' THEN 600.00
+        WHEN tamanho = 'media' AND servico_desejado = 'Aquecimento de Piscinas' THEN 700.00
+        WHEN tamanho = 'grande' AND servico_desejado = 'Aquecimento de Piscinas' THEN 800.00
 
-        WHEN tamanho = 'pequena' AND servico_desejado = 'Instalação de Capas Protetoras' THEN 500.00
-        WHEN tamanho = 'media' AND servico_desejado = 'Instalação de Capas Protetoras' THEN 800.00
-        WHEN tamanho = 'grande' AND servico_desejado = 'Instalação de Capas Protetoras' THEN 1000.00
+        WHEN tamanho = 'pequena' AND servico_desejado = 'Instalação de Capas Protetoras' THEN 100.00
+        WHEN tamanho = 'media' AND servico_desejado = 'Instalação de Capas Protetoras' THEN 150.00
+        WHEN tamanho = 'grande' AND servico_desejado = 'Instalação de Capas Protetoras' THEN 200.00
 
-        WHEN tamanho = 'pequena' AND servico_desejado = 'Tratamento da Água' THEN 800.00
-        WHEN tamanho = 'media' AND servico_desejado = 'Tratamento da Água' THEN 1200.00
-        WHEN tamanho = 'grande' AND servico_desejado = 'Tratamento da Água' THEN 1500.00
+        WHEN tamanho = 'pequena' AND servico_desejado = 'Tratamento da Água' THEN 250.00
+        WHEN tamanho = 'media' AND servico_desejado = 'Tratamento da Água' THEN 350.00
+        WHEN tamanho = 'grande' AND servico_desejado = 'Tratamento da Água' THEN 450.00
         ELSE 0.00
     END;
-SET SQL_SAFE_UPDATES = 1;
 
 
 CREATE TABLE servicos (
@@ -79,9 +80,9 @@ CREATE TABLE servicos (
     piscina_id INT,
     profissional_id INT,
     tipo_servico ENUM('limpeza', 'manutencao', 'reparo','aquecimento_piscinas', 
-    'acabamentos', 'construcao_reforma', 'instalacao_de_capas','automacao','tratamento_agua') NOT NULL,
+    'instalacao_de_capas','tratamento_agua') NOT NULL,
     descricao TEXT,
-    estatus ENUM('pendente', 'em_andamento', 'concluido', 'cancelado') DEFAULT 'pendente',
+    estatus ENUM('pendente', 'concluido', 'cancelado') DEFAULT 'pendente',
     data_solicitacao DATETIME DEFAULT CURRENT_TIMESTAMP,
     data_execucao DATETIME,
     preco DECIMAL(10,2),
@@ -103,41 +104,30 @@ INSERT INTO clientes (id)
 SELECT id FROM usuarios WHERE tipo_usuario = 'cliente';
 
 
+INSERT INTO profissionais (id) 
+SELECT id FROM usuarios WHERE tipo_usuario = 'profissional';
+
 select*from profissionais;
 select*from clientes;
 
-SELECT 
-    s.id, 
-    s.tipo_servico, 
-    s.descricao, 
-    s.estatus, 
-    s.preco, 
-    s.data_solicitacao, 
-    s.data_execucao, 
-    p.tamanho, 
-    p.tipo AS tipo_piscina, 
-    u.nome AS cliente_nome, 
-    u.email AS cliente_email
-FROM servicos s
-JOIN piscinas p ON s.piscina_id = p.id
-JOIN usuarios u ON p.cliente_id = u.id
-WHERE s.id = 1 
-AND s.profissional_id = 2;
-
 SELECT * FROM piscinas WHERE id;
 
-SELECT * FROM profissionais WHERE id = 2;
-insert into profissionais values
-(1, null,null),
-(2, null,null),
-(3, null,null);
 
 SELECT * FROM piscinas;
+SELECT 
+    p.id,
+    u.nome AS cliente_nome,
+    u.email AS cliente_email,
+    u.endereco AS cliente_endereco,  -- endereço vem da tabela usuarios
+    p.tamanho,
+    p.tipo,
+    p.profundidade,
+    p.data_instalacao,
+    p.servico_desejado
+FROM piscinas p
+JOIN usuarios u ON p.cliente_id = u.id
+WHERE p.status = 'pendente'
+ORDER BY p.data_solicitacao DESC;
 
-ALTER TABLE clientes
-DROP FOREIGN KEY clientes_ibfk_1;
-
-ALTER TABLE clientes
-ADD CONSTRAINT clientes_ibfk_1 FOREIGN KEY (id) REFERENCES usuarios(id) ON DELETE CASCADE;
 
 
