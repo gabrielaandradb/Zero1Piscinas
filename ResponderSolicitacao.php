@@ -24,6 +24,7 @@ if (!$profissional_id) {
     exit;
 }
 
+// Obter detalhes da solicitação
 $query_solicitacao = "
     SELECT 
         piscinas.*, 
@@ -49,64 +50,68 @@ $mensagem_erro = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_STRING);
     $comentario = filter_input(INPUT_POST, 'comentario', FILTER_SANITIZE_STRING);
+    $tipo_servico = $solicitacao['servico_desejado'];
+    $preco = $solicitacao['preco'];
+    $data_execucao = date('Y-m-d H:i:s');
 
     try {
-    // Validar se o profissional existe na tabela profissionais
-    $query_profissional = "SELECT id FROM profissionais WHERE id = :profissional_id";
-    $stmt_profissional = $conexao->prepare($query_profissional);
-    $stmt_profissional->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
-    $stmt_profissional->execute();
+        // Validar se o profissional existe na tabela profissionais
+        $query_profissional = "SELECT id FROM profissionais WHERE id = :profissional_id";
+        $stmt_profissional = $conexao->prepare($query_profissional);
+        $stmt_profissional->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
+        $stmt_profissional->execute();
 
-    // Criar o profissional se ele não existir
-    if ($stmt_profissional->rowCount() === 0) {
-        $query_inserir_profissional = "
-            INSERT INTO profissionais (id, nome, ...)
-            VALUES (:profissional_id, :nome, ...);
+        // Criar o profissional se ele não existir
+        if ($stmt_profissional->rowCount() === 0) {
+            $query_inserir_profissional = "
+                INSERT INTO profissionais (id, especialidades, experiencia_anos)
+                VALUES (:profissional_id, '', 0);
+            ";
+            $stmt_inserir = $conexao->prepare($query_inserir_profissional);
+            $stmt_inserir->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
+            $stmt_inserir->execute();
+        }
+
+        $conexao->beginTransaction();
+
+        // Atualizar a tabela piscinas
+        $query_update = "
+            UPDATE piscinas 
+            SET status = :status, resposta = :resposta
+            WHERE id = :solicitacao_id;
         ";
-        $stmt_inserir = $conexao->prepare($query_inserir_profissional);
-        $stmt_inserir->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
-        $stmt_inserir->bindParam(':nome', $_SESSION['ClassUsuarios']['nome'], PDO::PARAM_STR);
-        // Inclua outros campos obrigatórios
-        $stmt_inserir->execute();
+        $stmt_update = $conexao->prepare($query_update);
+        $stmt_update->bindParam(':status', $status);
+        $stmt_update->bindParam(':resposta', $comentario);
+        $stmt_update->bindParam(':solicitacao_id', $solicitacao_id, PDO::PARAM_INT);
+        $stmt_update->execute();
+
+        // Inserir na tabela servicos
+        $query_servicos = "
+            INSERT INTO servicos (piscina_id, profissional_id, tipo_servico, descricao, estatus, data_execucao, preco)
+            VALUES (:piscina_id, :profissional_id, :tipo_servico, :descricao, :estatus, :data_execucao, :preco);
+        ";
+        $stmt_servicos = $conexao->prepare($query_servicos);
+        $stmt_servicos->bindParam(':piscina_id', $solicitacao_id, PDO::PARAM_INT);
+        $stmt_servicos->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
+        $stmt_servicos->bindParam(':tipo_servico', $tipo_servico, PDO::PARAM_STR);
+        $stmt_servicos->bindParam(':descricao', $comentario, PDO::PARAM_STR);
+        $stmt_servicos->bindParam(':estatus', $status, PDO::PARAM_STR);
+        $stmt_servicos->bindParam(':data_execucao', $data_execucao, PDO::PARAM_STR);
+        $stmt_servicos->bindParam(':preco', $preco, PDO::PARAM_STR);
+        $stmt_servicos->execute();
+
+        $conexao->commit();
+
+        $mensagem_sucesso = "Resposta enviada com sucesso!";
+        $solicitacao['status'] = $status;
+        $solicitacao['resposta'] = $comentario;
+    } catch (Exception $e) {
+        if ($conexao->inTransaction()) {
+            $conexao->rollBack();
+        }
+        $mensagem_erro = "Erro ao enviar a resposta: " . $e->getMessage();
     }
-
-    $conexao->beginTransaction();
-
-    // Atualizar a tabela piscinas
-    $query_update = "
-        UPDATE piscinas 
-        SET status = :status, resposta = :resposta
-        WHERE id = :solicitacao_id;
-    ";
-    $stmt_update = $conexao->prepare($query_update);
-    $stmt_update->bindParam(':status', $status);
-    $stmt_update->bindParam(':resposta', $comentario);
-    $stmt_update->bindParam(':solicitacao_id', $solicitacao_id, PDO::PARAM_INT);
-    $stmt_update->execute();
-
-    // Inserir na tabela servicos
-    $query_servicos = "
-        INSERT INTO servicos (piscina_id, profissional_id, tipo_servico, descricao, estatus)
-        VALUES (:piscina_id, :profissional_id, 'concluido', :descricao, :estatus);
-    ";
-    $stmt_servicos = $conexao->prepare($query_servicos);
-    $stmt_servicos->bindParam(':piscina_id', $solicitacao_id, PDO::PARAM_INT);
-    $stmt_servicos->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
-    $stmt_servicos->bindParam(':descricao', $comentario, PDO::PARAM_STR);
-    $stmt_servicos->bindParam(':estatus', $status, PDO::PARAM_STR);
-    $stmt_servicos->execute();
-
-    $conexao->commit();
-
-    $mensagem_sucesso = "Resposta enviada com sucesso!";
-    $solicitacao['status'] = $status;
-    $solicitacao['resposta'] = $comentario;
-} catch (Exception $e) {
-    if ($conexao->inTransaction()) {
-        $conexao->rollBack();
-    }
-    $mensagem_erro = "Erro ao enviar a resposta: " . $e->getMessage();
-}
 }
 ?>
 
@@ -117,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="img/logo.webp" type="image/x-icon">
     <title>Responder Solicitação</title>
     <link rel="stylesheet" href="css/estilo.css" />
 </head>

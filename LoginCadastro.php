@@ -99,7 +99,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="img/logo.webp" type="image/x-icon">
     <title>Login/Cadastro</title>
     <link rel="stylesheet" href="css/estilo.css">
     <script src="js/script.js" defer></script>

@@ -18,75 +18,28 @@ if (isset($_GET['piscina_id'])) {
 $conexao = Conexao::getInstance();
 
 // Busca as piscinas do cliente logado
-$sqlPiscinas = "SELECT id, tipo, tamanho, status, resposta FROM piscinas WHERE cliente_id = :cliente_id";
-$stmtPiscinas = $conexao->prepare($sqlPiscinas);
+$queryPiscinas = "
+    SELECT 
+        p.id, 
+        p.tipo, 
+        p.tamanho, 
+        p.profundidade, 
+        p.data_instalacao, 
+        p.servico_desejado, 
+        p.status, 
+        u.nome AS cliente_nome, 
+        u.email AS cliente_email, 
+        u.endereco AS cliente_endereco 
+    FROM piscinas p
+    JOIN usuarios u ON p.cliente_id = u.id
+    WHERE p.cliente_id = :cliente_id
+    ORDER BY p.data_instalacao ASC
+";
+
+$stmtPiscinas = $conexao->prepare($queryPiscinas);
 $stmtPiscinas->bindParam(':cliente_id', $_SESSION['ClassUsuarios']['id'], PDO::PARAM_INT);
 $stmtPiscinas->execute();
 $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
-
-// Tabela de preços
-$tabelaPrecos = [
-    'pequena' => [
-        'Limpeza de Piscinas' => 150.00,
-        'Manutenção' => 200.00,
-        'Reparos' => 300.00,
-        'Aquecimento de Piscinas' => 2000.00,
-        'Instalação de Capas Protetoras' => 500.00,
-        'Tratamento da Água' => 800.00
-    ],
-    'media' => [
-        'Limpeza de Piscinas' => 250.00,
-        'Manutenção' => 300.00,
-        'Reparos' => 450.00,
-        'Aquecimento de Piscinas' => 3000.00,
-        'Instalação de Capas Protetoras' => 800.00,
-        'Tratamento da Água' => 1200.00
-    ],
-    'grande' => [
-        'Limpeza de Piscinas' => 350.00,
-        'Manutenção' => 400.00,
-        'Reparos' => 600.00,
-        'Aquecimento de Piscinas' => 4000.00,
-        'Instalação de Capas Protetoras' => 1000.00,
-        'Tratamento da Água' => 1500.00
-    ]
-];
-
-// Função para determinar a categoria da piscina
-function getCategoriaTamanho($tamanho) {
-    if ($tamanho <= 10) {
-        return 'pequena';
-    } elseif ($tamanho <= 25) {
-        return 'media';
-    } else {
-        return 'grande';
-    }
-}
-$ordem = 'ASC'; // ou 'DESC', dependendo da ordem desejada.
-
-$query_piscinas = "
-    SELECT 
-        p.id,
-        u.nome AS cliente_nome,
-        u.email AS cliente_email,
-        u.endereco AS cliente_endereco,
-        p.tamanho,
-        p.tipo,
-        p.profundidade,
-        p.data_instalacao,
-        p.servico_desejado,
-        p.status,
-        p.preco
-    FROM piscinas p
-    JOIN usuarios u ON p.cliente_id = u.id
-    WHERE p.status = 'pendente' AND p.cliente_id = :cliente_id
-    ORDER BY p.data_solicitacao $ordem;
-";
-
-$stmt_piscinas = $conexao->prepare($query_piscinas);
-$stmt_piscinas->bindParam(':cliente_id', $_SESSION['ClassUsuarios']['id'], PDO::PARAM_INT);
-$stmt_piscinas->execute();
-$piscinas = $stmt_piscinas->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -342,85 +295,88 @@ $piscinas = $stmt_piscinas->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <div class="container">
         <div class="menu">
-            <h2>Zero1 Piscinas <br> <img src="img/logo1.png" alt="Ícone"></h2>
+            <h2>Zero1 Piscinas <br> <img src="img/logo1.png" alt="Logo"></h2>
             <ul>
                 <li><a href="Clientes.php">Voltar</a></li>
-                <li><a href="Clientes.php">Voltar</a></li>
+                <li><a href="logout.php">Sair</a></li>
             </ul>
-            <!-- Meus Dados -->
-        <div id="perfil" class="card">
-            <h2>Meus Dados</h2>
-            <p><strong>Nome:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['nome']); ?></p>
-            <p><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['email']); ?></p>
-            <p><strong>Telefone:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['telefone']); ?></p>
-            <p><strong>Endereço:</strong> <?php echo htmlspecialchars($_SESSION['ClassUsuarios']['endereco']); ?></p>
-            <button class="btn" onclick="window.location.href='editarClientes.php';">
-                <img src="img/editar-usuario.png" alt="Editar-usuario">  Editar Informações</button>
+            <div id="perfil" class="card">
+                <h2>Meus Dados</h2>
+                <p><strong>Nome:</strong> <?= htmlspecialchars($_SESSION['ClassUsuarios']['nome']); ?></p>
+                <p><strong>Email:</strong> <?= htmlspecialchars($_SESSION['ClassUsuarios']['email']); ?></p>
+                <p><strong>Telefone:</strong> <?= htmlspecialchars($_SESSION['ClassUsuarios']['telefone']); ?></p>
+                <p><strong>Endereço:</strong> <?= htmlspecialchars($_SESSION['ClassUsuarios']['endereco']); ?></p>
+                <button class="btn" onclick="window.location.href='editarClientes.php';">
+                    <img src="img/editar-usuario.png" alt="Editar"> Editar Informações
+                </button>
+            </div>
         </div>
-        </div>
-        
-        <div>
+        <div class="content">
             <div class="header">
                 <h1>Acompanhar Serviço</h1>
-                
-                <div class="header-text"><br>
-             <p class="welcome" >Aqui você pode gerenciar suas informações e acompanhar os serviços.</p>
-                </div>
-                <a href="logout.php" class="btn">Sair <img src="img/sair.png" alt="sair"></a>
+                <p>Gerencie suas informações e acompanhe os serviços solicitados.</p>
             </div>
-            <?php if (count($piscinas) === 0): ?>
-                <div class="card">
-                    <p>Você ainda não cadastrou nenhuma piscina.</p>
-                </div>
-            <?php else: ?>
-                <?php foreach ($piscinas as $piscina): ?>
-                    <div id="formularios" class="card">
-            <h3 class="servicos-title">Serviços solicitados:</h3>
-                        <?php
-                        $sqlServicos = "SELECT tipo_servico, descricao, estatus, data_execucao, preco FROM servicos WHERE piscina_id = :piscina_id ORDER BY data_solicitacao DESC";
-                        $stmtServicos = $conexao->prepare($sqlServicos);
-                        $stmtServicos->bindParam(':piscina_id', $piscina['id'], PDO::PARAM_INT);
-                        $stmtServicos->execute();
-                        $servicos = $stmtServicos->fetchAll(PDO::FETCH_ASSOC);
-                        ?>
-                        
-                        
+            <?php foreach ($piscinas as $piscina): ?>
+    <div class="card">
+        <!-- Detalhes da Piscina -->
+        <div class="detalhes-piscina">
+            <h3>Formulário enviado:</h3>
             <p><strong>Cliente:</strong> <?= htmlspecialchars($piscina['cliente_nome']); ?> (<?= htmlspecialchars($piscina['cliente_email']); ?>)</p>
-            <p><strong>Endereço:</strong> 
-                <?= !empty($piscina['cliente_endereco']) 
-                    ? htmlspecialchars($piscina['cliente_endereco']) 
-                    : 'Endereço não informado'; ?>
-            </p>
+            <p><strong>Endereço:</strong> <?= htmlspecialchars($piscina['cliente_endereco'] ?: 'Endereço não informado'); ?></p>
             <p><strong>Tamanho:</strong> <?= htmlspecialchars($piscina['tamanho']); ?></p>
             <p><strong>Tipo:</strong> <?= htmlspecialchars($piscina['tipo']); ?></p>
             <p><strong>Profundidade:</strong> <?= htmlspecialchars($piscina['profundidade']); ?></p>
-            <p><strong>Data de instalação desejada:</strong> <?= date('d/m/Y', strtotime($piscina['data_instalacao'])); ?></p>
-            <p><strong>Serviço desejado:</strong> <?= htmlspecialchars($piscina['servico_desejado']); ?></p>
-                    <br>
+            <p><strong>Data de Instalação:</strong> <?= date('d/m/Y', strtotime($piscina['data_instalacao'])); ?></p>
+            <p><strong>Serviço Desejado:</strong> <?= htmlspecialchars($piscina['servico_desejado']); ?></p>
+        </div>
+<br>
+        <!-- Serviços Solicitados -->
+        <div class="servicos-solicitados">
+            <h3>Serviços Solicitados:</h3>
+            <?php
+            $queryServicos = "
+                SELECT tipo_servico, descricao, estatus, data_execucao, preco 
+                FROM servicos 
+                WHERE piscina_id = :piscina_id 
+                ORDER BY data_solicitacao DESC
+            ";
+            $stmtServicos = $conexao->prepare($queryServicos);
+            $stmtServicos->bindParam(':piscina_id', $piscina['id'], PDO::PARAM_INT);
+            $stmtServicos->execute();
+            $servicos = $stmtServicos->fetchAll(PDO::FETCH_ASSOC);
+            ?>
 
-                        <?php if (count($servicos) === 0): ?>
-                            <p>Sem resposta do profissional, aguarde!</p>
-                        <?php else: ?>
-                            <?php foreach ($servicos as $servico): ?>
-                                <div class="servico-item">
-                        <p><strong>Tipo de piscina:</strong> <?= htmlspecialchars($piscina['tipo']) ?></p>
-                                    <p><strong>Resposta do profissional:</strong> <?= nl2br(htmlspecialchars($servico['descricao'])) ?></p>
-                                    <p><strong>Status:</strong> <?= htmlspecialchars($servico['estatus']) ?></p>
-                                    <p><strong>Data execução:</strong> <?= $servico['data_execucao'] ? date('d/m/Y H:i', strtotime($servico['data_execucao'])) : 'Não executado' ?></p>
-                                    <p><strong>Preço:</strong> R$ <?= number_format($servico['preco'], 2, ',', '.') ?></p>
-                                
-                                 <!-- Botão de Confirmar -->
-                <form action="Pagamento.php" method="GET">
-                    <button class="btn" type="submit">
-                        Realizar Pagamento
-                    </button>
-                </form>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+            <?php if (empty($servicos)): ?>
+                <p><em>Sem resposta do profissional, aguarde.</em></p>
+            <?php else: ?>
+                <?php foreach ($servicos as $servico): ?>
+                    <div class="servico-item">
+                        <p><strong>Resposta do profissional:</strong> <?= nl2br(htmlspecialchars($servico['descricao'])); ?></p>
+                        <p><strong>Status:</strong> <?= htmlspecialchars($servico['estatus']); ?></p>
+                        <p><strong>Data de Execução:</strong> <?= $servico['data_execucao'] ? date('d/m/Y H:i', strtotime($servico['data_execucao'])) : 'Não executado'; ?></p>
+                        <p><strong>Preço:</strong> R$ <?= number_format($servico['preco'], 2, ',', '.'); ?></p>
+                <!-- botão -->       
+                 
+                
+            <?php if ($servico['estatus'] === 'concluido'): ?>
+                <button class="btn" onclick="window.location.href='Pagamento.php';">
+                Realizar Pagamento
+                </button>
+            <?php elseif ($servico['estatus'] === 'cancelado'): ?>
+                <button class="btn" onclick="window.location.href='Confirmar.php';">
+                Confirmar
+                </button>
+            <?php endif; ?>
+
                     </div>
+                    <hr>
                 <?php endforeach; ?>
             <?php endif; ?>
+        </div>
+    </div>
+<?php endforeach; ?>
+
+            
         </div>
     </div>
 </body>

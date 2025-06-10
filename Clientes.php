@@ -28,6 +28,8 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zero1 Piscinas - Clientes</title>
     <link rel="stylesheet" href="css/estilo.css">
+    <link rel="shortcut icon" href="img/logo.webp" type="image/x-icon">
+
     <style>
         * {
             margin: 0;

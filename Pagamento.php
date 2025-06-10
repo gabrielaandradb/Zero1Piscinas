@@ -39,7 +39,7 @@ if (!$servico) {
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/estilo.css">
-    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="img/logo.webp" type="image/x-icon">
     <title>Pagamento</title>
     <style>
         body {
@@ -100,10 +100,38 @@ if (!$servico) {
         <p><strong>Serviço:</strong> <?= htmlspecialchars($servico['tipo_servico']) ?></p>
         <p><strong>Descrição:</strong> <?= nl2br(htmlspecialchars($servico['descricao'])) ?></p>
         <p><strong>Preço:</strong> R$ <?= number_format($servico['preco'], 2, ',', '.') ?></p>
-        <form action="processarPagamento.php" method="POST">
-            <input type="hidden" name="servico_id" value="<?= $servicoId ?>">
-            <button type="submit" class="btn">Confirmar Pagamento</button>
-        </form>
+
+        <!-- Botão do PayPal -->
+        <div id="paypal-button-container"></div>
     </div>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=SB_CLIENT_ID&currency=BRL"></script>
+    <script>
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '<?= number_format($servico['preco'], 2, '.', '') ?>'
+                        },
+                        description: "Pagamento do serviço: <?= htmlspecialchars($servico['tipo_servico']) ?>",
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    alert('Pagamento realizado com sucesso por ' + details.payer.name.given_name);
+                    // Aqui você pode redirecionar ou salvar no banco
+                });
+            },
+            onCancel: function() {
+                alert('Pagamento cancelado.');
+            },
+            onError: function(err) {
+                console.error(err);
+                alert('Ocorreu um erro durante o pagamento.');
+            }
+        }).render('#paypal-button-container');
+    </script>
 </body>
 </html>
