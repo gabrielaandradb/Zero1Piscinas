@@ -1,3 +1,4 @@
+drop database Zero1Piscinas;
 CREATE DATABASE Zero1Piscinas;
 USE Zero1Piscinas;
 
@@ -103,17 +104,34 @@ CREATE TABLE pagamentos (
 INSERT INTO clientes (id) 
 SELECT id FROM usuarios WHERE tipo_usuario = 'cliente';
 
-
 INSERT INTO profissionais (id) 
 SELECT id FROM usuarios WHERE tipo_usuario = 'profissional';
 
 select*from profissionais;
 select*from clientes;
 
+SELECT 
+    s.id, 
+    s.tipo_servico, 
+    s.descricao, 
+    s.estatus, 
+    s.preco, 
+    s.data_solicitacao, 
+    s.data_execucao, 
+    p.tamanho, 
+    p.tipo AS tipo_piscina, 
+    u.nome AS cliente_nome, 
+    u.email AS cliente_email
+FROM servicos s
+JOIN piscinas p ON s.piscina_id = p.id
+JOIN usuarios u ON p.cliente_id = u.id
+WHERE s.id = 1 
+AND s.profissional_id = 2;
+
 SELECT * FROM piscinas WHERE id;
 
-
 SELECT * FROM piscinas;
+
 SELECT 
     p.id,
     u.nome AS cliente_nome,
@@ -129,5 +147,5 @@ JOIN usuarios u ON p.cliente_id = u.id
 WHERE p.status = 'pendente'
 ORDER BY p.data_solicitacao DESC;
 
-
+SET SQL_SAFE_UPDATES = 1;
 

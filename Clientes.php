@@ -410,11 +410,7 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
     <button type="submit" class="btn" <?php echo $infoPendente ? 'disabled' : ''; ?>>Solicitar Serviço</button>
 </form>
             
-            <div class="actions">
-
-                <button class="btn" onclick="window.location.href='excluirSolicitacao.php';">
-                    <img src="img/excluir.png" alt="Excluir"> Excluir Solicitação</button>
-            </div>
+            
         </div>
     </div>
 </div>

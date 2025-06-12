@@ -113,7 +113,6 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
             top: 0; 
             background-color: white; /* Cor de fundo para evitar transparência ao fixar */
             z-index: 1000; /* Garante que o nav fique acima de outros elementos */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Adiciona uma leve sombra para destaque */
             padding: 10px 0;
         }
 

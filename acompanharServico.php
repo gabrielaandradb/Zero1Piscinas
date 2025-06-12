@@ -48,7 +48,7 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="css/estilo.css">
-    <link rel="shortcut icon" href="img/logo.png" type="image/x-icon">
+    <link rel="shortcut icon" href="img/logo.webp" type="image/x-icon">
     <title>Minhas Piscinas e Serviços</title>
     <style>
         * {
@@ -328,9 +328,16 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
             <p><strong>Profundidade:</strong> <?= htmlspecialchars($piscina['profundidade']); ?></p>
             <p><strong>Data de Instalação:</strong> <?= date('d/m/Y', strtotime($piscina['data_instalacao'])); ?></p>
             <p><strong>Serviço Desejado:</strong> <?= htmlspecialchars($piscina['servico_desejado']); ?></p>
+        
+        <div class="actions">
+
+                <button class="btn" onclick="window.location.href='excluirSolicitacao.php';">
+                    <img src="img/excluir.png" alt="Excluir"> Excluir Solicitação</button>
+            </div>
         </div>
 <br>
         <!-- Serviços Solicitados -->
+         <form action="Pagamento.php" method="GET">
         <div class="servicos-solicitados">
             <h3>Serviços Solicitados:</h3>
             <?php
@@ -354,7 +361,7 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
                         <p><strong>Resposta do profissional:</strong> <?= nl2br(htmlspecialchars($servico['descricao'])); ?></p>
                         <p><strong>Status:</strong> <?= htmlspecialchars($servico['estatus']); ?></p>
                         <p><strong>Data de Execução:</strong> <?= $servico['data_execucao'] ? date('d/m/Y H:i', strtotime($servico['data_execucao'])) : 'Não executado'; ?></p>
-                        <p><strong>Preço:</strong> R$ <?= number_format($servico['preco'], 2, ',', '.'); ?></p>
+                        <p><strong>Valor:</strong> R$ <?= number_format($servico['preco'], 2, ',', '.'); ?></p>
                 <!-- botão -->       
                  
                 
@@ -367,6 +374,10 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
                 Confirmar
                 </button>
             <?php endif; ?>
+            <?php if (empty($piscinas)): ?>
+    <p>Você ainda não solicitou nenhum serviço. <a href="Clientes.php">Clique aqui para solicitar</a>.</p>
+<?php endif; ?>
+            </form>
 
                     </div>
                     <hr>

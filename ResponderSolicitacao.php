@@ -151,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="cancelado" <?= ($solicitacao['status'] === 'cancelado') ? 'selected' : '' ?>>Cancelado</option>
             </select>
 
-            <label for="comentario">Comentário</label>
+            <label for="comentario">Resposta</label>
             <textarea name="comentario" id="comentario" rows="5" required>
                 <?= htmlspecialchars($solicitacao['resposta'] ?? '') ?>
             </textarea>
