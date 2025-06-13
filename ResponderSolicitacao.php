@@ -1,4 +1,4 @@
-<?php
+<?php 
 session_start();
 
 // Verifique se o profissional está logado
@@ -16,7 +16,6 @@ if (!$solicitacao_id) {
     exit;
 }
 
-// Obter o ID do profissional logado
 $profissional_id = $_SESSION['ClassUsuarios']['id'];
 
 if (!$profissional_id) {
@@ -54,66 +53,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $preco = $solicitacao['preco'];
     $data_execucao = date('Y-m-d H:i:s');
 
-    try {
-        // Validar se o profissional existe na tabela profissionais
-        $query_profissional = "SELECT id FROM profissionais WHERE id = :profissional_id";
-        $stmt_profissional = $conexao->prepare($query_profissional);
-        $stmt_profissional->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
-        $stmt_profissional->execute();
-
-        // Criar o profissional se ele não existir
-        if ($stmt_profissional->rowCount() === 0) {
-            $query_inserir_profissional = "
-                INSERT INTO profissionais (id, especialidades, experiencia_anos)
-                VALUES (:profissional_id, '', 0);
-            ";
-            $stmt_inserir = $conexao->prepare($query_inserir_profissional);
-            $stmt_inserir->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
-            $stmt_inserir->execute();
-        }
-
-        $conexao->beginTransaction();
-
-        // Atualizar a tabela piscinas
-        $query_update = "
-            UPDATE piscinas 
-            SET status = :status, resposta = :resposta
-            WHERE id = :solicitacao_id;
-        ";
-        $stmt_update = $conexao->prepare($query_update);
-        $stmt_update->bindParam(':status', $status);
-        $stmt_update->bindParam(':resposta', $comentario);
-        $stmt_update->bindParam(':solicitacao_id', $solicitacao_id, PDO::PARAM_INT);
-        $stmt_update->execute();
-
-        // Inserir na tabela servicos
-        $query_servicos = "
-            INSERT INTO servicos (piscina_id, profissional_id, tipo_servico, descricao, estatus, data_execucao, preco)
-            VALUES (:piscina_id, :profissional_id, :tipo_servico, :descricao, :estatus, :data_execucao, :preco);
-        ";
-        $stmt_servicos = $conexao->prepare($query_servicos);
-        $stmt_servicos->bindParam(':piscina_id', $solicitacao_id, PDO::PARAM_INT);
-        $stmt_servicos->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
-        $stmt_servicos->bindParam(':tipo_servico', $tipo_servico, PDO::PARAM_STR);
-        $stmt_servicos->bindParam(':descricao', $comentario, PDO::PARAM_STR);
-        $stmt_servicos->bindParam(':estatus', $status, PDO::PARAM_STR);
-        $stmt_servicos->bindParam(':data_execucao', $data_execucao, PDO::PARAM_STR);
-        $stmt_servicos->bindParam(':preco', $preco, PDO::PARAM_STR);
-        $stmt_servicos->execute();
-
-        $conexao->commit();
-
-        $mensagem_sucesso = "Resposta enviada com sucesso!";
-        $solicitacao['status'] = $status;
-        $solicitacao['resposta'] = $comentario;
-    } catch (Exception $e) {
-        if ($conexao->inTransaction()) {
-            $conexao->rollBack();
-        }
-        $mensagem_erro = "Erro ao enviar a resposta: " . $e->getMessage();
+    // Ajustar valores para status "cancelado"
+    if ($status === 'cancelado') {
+        $comentario = null; // Remover descrição
+        $preco = null;      // Não registrar preço
+        $data_execucao = null; // Remover data de execução
     }
+
+    try {
+    $conexao->beginTransaction();
+
+    // Confirma se o profissional existe
+    $query_profissional = "SELECT id FROM profissionais WHERE id = :profissional_id";
+    $stmt_profissional = $conexao->prepare($query_profissional);
+    $stmt_profissional->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
+    $stmt_profissional->execute();
+
+    if (!$stmt_profissional->fetch()) {
+        throw new Exception("Profissional não registrado.");
+    }
+
+    // Atualizar a tabela piscinas
+    $query_update = "
+        UPDATE piscinas 
+        SET status = :status, resposta = :resposta
+        WHERE id = :solicitacao_id;
+    ";
+    $stmt_update = $conexao->prepare($query_update);
+    $stmt_update->bindParam(':status', $status);
+    $stmt_update->bindParam(':resposta', $comentario);
+    $stmt_update->bindParam(':solicitacao_id', $solicitacao_id, PDO::PARAM_INT);
+    $stmt_update->execute();
+
+    // Inserir na tabela servicos
+    $query_servicos = "
+        INSERT INTO servicos (piscina_id, profissional_id, tipo_servico, descricao, estatus)
+        VALUES (:piscina_id, :profissional_id, :tipo_servico, :descricao, :estatus);
+    ";
+    $stmt_servicos = $conexao->prepare($query_servicos);
+    $stmt_servicos->bindParam(':piscina_id', $solicitacao_id, PDO::PARAM_INT);
+    $stmt_servicos->bindParam(':profissional_id', $profissional_id, PDO::PARAM_INT);
+    $stmt_servicos->bindParam(':tipo_servico', $tipo_servico, PDO::PARAM_STR);
+    $stmt_servicos->bindParam(':descricao', $descricao, PDO::PARAM_STR);
+    $stmt_servicos->bindParam(':estatus', $status, PDO::PARAM_STR);
+    $stmt_servicos->execute();
+
+    $conexao->commit();
+
+    $mensagem_sucesso = "Resposta enviada com sucesso!";
+} catch (Exception $e) {
+    if ($conexao->inTransaction()) {
+        $conexao->rollBack();
+    }
+    $mensagem_erro = "Erro ao enviar a resposta: " . $e->getMessage();
+}
+
+
 }
 ?>
+
 
 
 

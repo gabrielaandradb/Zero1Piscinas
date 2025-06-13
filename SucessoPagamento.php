@@ -67,7 +67,7 @@ if (!isset($_SESSION['ClassUsuarios']['id'])) {
         <h1>Pagamento Concluído</h1>
         <p>Seu pagamento foi processado com sucesso!</p>
         <p>Obrigado por escolher nossos serviços.</p>
-        <a href="Clientes.php" class="btn">Voltar ao Início</a>
+        <a href="index.php" class="btn">Voltar ao Início</a>
     </div>
 </body>
 </html>

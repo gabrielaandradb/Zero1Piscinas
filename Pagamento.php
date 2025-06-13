@@ -103,50 +103,51 @@ if (!$servico) {
     <script src="https://sandbox.paypal.com/sdk/js?client-id=AUoP8cys_BnXZ7OYianLBlZa02TEjN3N7qU8HhMSv_HAMSN6TWV1Iz0aj3ez6yusRUQDv_AHupyCi9b6&currency=BRL"></script>
     <script>
     paypal.Buttons({
-        createOrder: function(data, actions) {
-            return actions.order.create({
-                purchase_units: [{
-                    amount: {
-                        value: '<?= number_format($servico['preco'], 2, '.', '') ?>'
-                    },
-                    description: "Pagamento do serviço: <?= htmlspecialchars($servico['tipo_servico']) ?>",
-                }]
+    createOrder: function(data, actions) {
+        return actions.order.create({
+            purchase_units: [{
+                amount: {
+                    value: '<?= number_format($servico['preco'], 2, '.', '') ?>'
+                },
+                description: "Pagamento do serviço: <?= htmlspecialchars($servico['tipo_servico']) ?>",
+            }]
+        });
+    },
+    onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+            fetch('ConfirmarPagamento.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    orderID: data.orderID
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Pagamento confirmado com sucesso!');
+                    window.location.href = 'SucessoPagamento.php';
+                } else {
+                    alert('Erro ao salvar pagamento: ' + data.message);
+                }
+            })
+            .catch(err => {
+                console.error('Erro ao comunicar com o servidor:', err);
+                alert('Erro ao processar o pagamento. Tente novamente mais tarde.');
             });
-        },
-        onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
-                alert('Pagamento realizado com sucesso por ' + details.payer.name.given_name);
+        });
+    },
+    onCancel: function() {
+        alert('Pagamento cancelado.');
+    },
+    onError: function(err) {
+        console.error('Erro no pagamento:', err);
+        alert('Erro durante o pagamento. Tente novamente.');
+    }
+}).render('#paypal-button-container');
 
-                fetch('ConfirmarPagamento.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ orderID: data.orderID })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Pagamento confirmado no servidor!');
-                        window.location.href = 'SucessoPagamento.php';
-                    } else {
-                        alert('Erro ao confirmar pagamento: ' + data.message);
-                    }
-                })
-                .catch(err => {
-                    console.error('Erro ao comunicar com o servidor:', err);
-                    alert('Erro ao comunicar com o servidor. Por favor, tente novamente.');
-                });
-            });
-        },
-        onCancel: function() {
-            alert('Pagamento cancelado. Você pode tentar novamente ou alterar o serviço.');
-        },
-        onError: function(err) {
-            console.error('Erro no pagamento:', err);
-            alert('Ocorreu um erro durante o pagamento. Por favor, tente novamente.');
-        }
-    }).render('#paypal-button-container');
     </script>
 
 </body>

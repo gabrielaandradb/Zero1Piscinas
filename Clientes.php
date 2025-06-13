@@ -195,13 +195,13 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
         }
 
         .mensagem {
-            margin: 20px;
-            padding: 15px;
-            background-color: Plum;
-            border: 1px solid #b0e0e6;
-            border-radius: 5px;
-            color: green;
             text-align: center;
+            margin: 20px; 
+            padding: 10px; 
+            background-color: #d4edda; 
+            color: #155724; 
+            border: 1px solid #c3e6cb; 
+            border-radius: 5px;
         }
 
         #perfil {
