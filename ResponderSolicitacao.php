@@ -93,6 +93,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt_servicos->bindParam(':preco', $preco);
         $stmt_servicos->execute();
 
+        // Obter o ID do serviço recém-inserido
+        $servico_id = $conexao->lastInsertId();
+
+        // Inserir na tabela pagamentos (apenas se o status for 'concluido')
+        if ($status === 'concluido') {
+            $query_pagamento = "
+                INSERT INTO pagamentos (servico_id, estatus, valor_pago)
+                VALUES (:servico_id, 'pendente', :valor_pago);
+            ";
+            $stmt_pagamento = $conexao->prepare($query_pagamento);
+            $stmt_pagamento->bindParam(':servico_id', $servico_id, PDO::PARAM_INT);
+            $stmt_pagamento->bindParam(':valor_pago', $preco, PDO::PARAM_STR);
+            $stmt_pagamento->execute();
+        }
+
         $conexao->commit();
 
         $mensagem_sucesso = "Resposta enviada com sucesso! Redirecionando...";
@@ -138,14 +153,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p><strong>Email:</strong> <?= htmlspecialchars($solicitacao['cliente_email']) ?></p>
 
         <form method="POST" action="">
-            <label for="status">Status</label>
+            <label for="status"><strong>Status:</strong></label>
             <select name="status" id="status" required>
-                <option value="pendente" >Pendente</option>
+                <option value="pendente" ></option>
                 <option value="concluido" <?= ($solicitacao['status'] === 'concluido') ? 'selected' : '' ?>>Concluído</option>
                 <option value="cancelado" <?= ($solicitacao['status'] === 'cancelado') ? 'selected' : '' ?>>Cancelado</option>
             </select>
 
-            <label for="comentario">Resposta</label>
+            <label for="comentario"><strong>Resposta</strong></label>
             <textarea name="comentario" id="comentario" rows="5" required><?= htmlspecialchars($solicitacao['resposta'] ?? '') ?></textarea>
 
             <input type="submit" value="Enviar" />

@@ -2,7 +2,6 @@
 session_start();
 require_once 'Conexao.php';
 
-// Verifica se o usuário está logado
 if (!isset($_SESSION['ClassUsuarios']['id'])) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
@@ -21,7 +20,6 @@ $orderID = $input['orderID'];
 $usuarioId = $_SESSION['ClassUsuarios']['id'];
 
 try {
-    // Conexão com o banco de dados
     $conexao = Conexao::getInstance();
 
     // Obter o ID do serviço concluído mais recente e o valor
@@ -43,11 +41,13 @@ try {
         throw new Exception('Nenhum serviço concluído encontrado para este usuário.');
     }
 
-    $statusPagamento = 'pago'; // Status fixo, pode ser ajustado conforme integração com API
-    $valorPago = $servico['valor']; // Valor do serviço concluído
+    $statusPagamento = 'pago';
+    $valorPago = $servico['valor'];
     $dataPagamento = date('Y-m-d H:i:s');
 
-    // Inserir o pagamento na tabela
+    $conexao->beginTransaction();
+
+    // Registrar pagamento
     $sqlPagamento = "
         INSERT INTO pagamentos (servico_id, estatus, transacao_id, data_pagamento, valor_pago)
         VALUES (:servico_id, :estatus, :transacao_id, :data_pagamento, :valor_pago)
@@ -60,8 +60,31 @@ try {
     $stmtPagamento->bindParam(':valor_pago', $valorPago, PDO::PARAM_STR);
     $stmtPagamento->execute();
 
+    // Atualizar o pagamento existente de "pendente" para "pago"
+$sqlAtualizarPagamento = "
+    UPDATE pagamentos
+    SET estatus = 'pago', 
+        transacao_id = :transacao_id, 
+        data_pagamento = :data_pagamento
+    WHERE servico_id = :servico_id AND estatus = 'pendente'
+";
+$stmtAtualizarPagamento = $conexao->prepare($sqlAtualizarPagamento);
+$stmtAtualizarPagamento->bindParam(':transacao_id', $orderID, PDO::PARAM_STR);
+$stmtAtualizarPagamento->bindParam(':data_pagamento', $dataPagamento, PDO::PARAM_STR);
+$stmtAtualizarPagamento->bindParam(':servico_id', $servico['id'], PDO::PARAM_INT);
+$stmtAtualizarPagamento->execute();
+
+
+
+    $conexao->commit();
+
     echo json_encode(['success' => true]);
 } catch (Exception $e) {
+    // Reverter transação em caso de erro
+    if ($conexao->inTransaction()) {
+        $conexao->rollBack();
+    }
+
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }

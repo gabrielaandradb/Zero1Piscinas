@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Verifica se o usuário está logado
 if (!isset($_SESSION['ClassUsuarios']['id'])) {
     header('Location: LoginCadastro.php');
     exit;

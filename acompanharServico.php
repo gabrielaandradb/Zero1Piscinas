@@ -325,8 +325,35 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
     <div class="mensagem">
         <p>Você ainda não solicitou nenhum serviço. <a href="Clientes.php">Clique aqui para solicitar</a>.</p>
     </div>
-<?php else: ?>
-    <?php foreach ($piscinas as $piscina): ?>
+
+
+    
+<?php
+$exibiuAlgumaPiscina = false; // Flag para saber se algo foi exibido
+foreach ($piscinas as $piscina):
+    // Verifica se existem serviços ainda não pagos ou pendentes
+    $queryServicosVisiveis = "
+    SELECT COUNT(*) AS total
+    FROM servicos s
+    LEFT JOIN pagamentos p ON s.id = p.servico_id
+    WHERE s.piscina_id = :piscina_id
+    AND (p.estatus IS NULL OR p.estatus != 'pago')
+";
+
+    $stmtCheck = $conexao->prepare($queryServicosVisiveis);
+    $stmtCheck->bindParam(':piscina_id', $piscina['id'], PDO::PARAM_INT);
+    $stmtCheck->execute();
+    $resultado = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+
+    if ($resultado['total'] == 0) {
+        continue; // pula essa piscina, pois todos os serviços estão pagos
+    }
+
+    $exibiuAlgumaPiscina = true;
+?>
+    ?>
+    
+
         <div class="card">
 
                         <div class="detalhes-piscina">
@@ -352,13 +379,16 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
 
                             <?php
                             $queryServicos = "
-                                SELECT s.id, s.tipo_servico, s.descricao, s.estatus, s.data_execucao, s.preco
-                                FROM servicos s
-                                LEFT JOIN pagamentos p ON s.id = p.servico_id
-                                WHERE s.piscina_id = :piscina_id
-                                AND (p.estatus IS NULL OR p.estatus = 'pendente')
-                                ORDER BY s.data_solicitacao DESC
-                            ";
+    SELECT s.id, s.tipo_servico, s.descricao, s.estatus, s.data_execucao, s.preco
+FROM servicos s
+LEFT JOIN pagamentos p ON s.id = p.servico_id
+WHERE s.piscina_id = :piscina_id
+  AND (p.estatus IS NULL OR p.estatus != 'pago')
+ORDER BY s.data_solicitacao DESC
+
+";
+
+
 
                             $stmtServicos = $conexao->prepare($queryServicos);
                             $stmtServicos->bindParam(':piscina_id', $piscina['id'], PDO::PARAM_INT);
@@ -367,9 +397,11 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
                             ?>
 
                             <?php if (empty($servicos)): ?>
-                                <p><em>Sem resposta do profissional, aguarde.</em></p>
+                                <p><strong>Status:</strong> Pendente
+                                    <br>Aguarde resposta do profissional</p>
                             <?php else: ?>
                                 <?php foreach ($servicos as $servico): ?>
+                                    
                                     <div class="servico-item">
                                         <p><strong>Resposta do profissional:</strong> <?= nl2br(htmlspecialchars($servico['descricao'])); ?></p>
                                         <p><strong>Status:</strong> <?= htmlspecialchars($servico['estatus']); ?></p>
