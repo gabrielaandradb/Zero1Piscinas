@@ -266,6 +266,27 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
             vertical-align: middle;
             margin-left: 10px;
         }
+
+        .whatsapp-container {
+            text-align: center;
+            margin-top: 50px;
+            font-family: Arial, sans-serif;
+        }
+
+        .whatsapp-container a {
+            display: inline-block;
+            background-color: #25D366;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .whatsapp-container a:hover {
+            background-color: #1ebd5a;
+        }
         
     </style>
     
@@ -336,7 +357,9 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
     <?php endif; ?>
             <button class="btn" onclick="window.location.href='editarClientes.php';">
                 <img src="img/editar-usuario.png" alt="Editar-usuario">  Editar Informações</button>
+                
         </div>
+        
     </div>
 
     <!-- Conteúdo principal -->
@@ -347,6 +370,9 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
              <p class="welcome" >Aqui você pode gerenciar suas informações e acompanhar os serviços.</p>
         </div>
     <a href="logout.php" class="btn">Sair <img src="img/sair.png" alt="sair"></a>
+
+    <br><br>
+    
 </div>
 
 
@@ -401,14 +427,23 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
                 
                 <br><br>
                 <?php if ($infoPendente): ?>
-        <p style="color: red; font-weight: bold;">
-            Você não pode solicitar um serviço até completar seu telefone e endereço.
-        </p>
-    <?php endif; ?>
+                <p style="color: red; font-weight: bold;">
+                    Você não pode solicitar um serviço até completar seu telefone e endereço.
+                </p>
+                <?php endif; ?>
 
-    <button type="submit" class="btn" <?php echo $infoPendente ? 'disabled' : ''; ?>>Solicitar Serviço</button>
-</form>
+                <button type="submit" class="btn" <?php echo $infoPendente ? 'disabled' : ''; ?>>Solicitar Serviço</button>
+            </form>
+            <br>
+
             
+            <!-- Whastapp -->
+                <div class="whatsapp-container">
+                <p>📞 Para quaisquer dúvidas ou informações, entre em contato conosco pelo WhatsApp:</p>
+                <a href="https://wa.me/5561998916927?text=Olá,%20gostaria%20de%20tirar%20uma%20dúvida." target="_blank">
+                Falar no WhatsApp
+               </a>
+              </div>
             
         </div>
     </div>

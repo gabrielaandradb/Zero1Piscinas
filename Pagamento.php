@@ -2,7 +2,6 @@
 session_start();
 require_once 'Conexao.php';
 
-// Verifica se o usuário está logado
 if (!isset($_SESSION['ClassUsuarios']['id'])) {
     header('Location: LoginCadastro.php');
     exit;
@@ -10,7 +9,6 @@ if (!isset($_SESSION['ClassUsuarios']['id'])) {
 
 $usuarioId = $_SESSION['ClassUsuarios']['id'];
 
-// Conexão com banco de dados
 $conexao = Conexao::getInstance();
 
 // Busca os serviços mais recentes contratados pelo cliente logado

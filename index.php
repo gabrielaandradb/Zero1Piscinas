@@ -294,6 +294,28 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
             margin-left: 10px;
         }
 
+        .whatsapp-container {
+            text-align: center;
+            margin-top: 50px;
+            font-family: Arial, sans-serif;
+            font-size: 20px;
+        }
+
+        .whatsapp-container a {
+            display: inline-block;
+            background-color: #25D366;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .whatsapp-container a:hover {
+            background-color: #1ebd5a;
+        }
+
     </style>
 </head>
 <body>
@@ -316,6 +338,7 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
                 <li><a href="index.php#servicos">Serviços</a></li>
                 <li><a href="index.php#precos">Preços</a></li>
                 <li><a href="index.php#quem-somos">Sobre nós</a></li>
+                <li><a href="index.php#contato">Contato</a></li>
                 <?php if ($usuario): ?>
                     <li><a href="Clientes.php">Meu Perfil</a></li>
                 <?php else: ?>
@@ -440,8 +463,18 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
                     suas necessidades com agilidade e excelência. Trabalhamos com tecnologia de ponta e um compromisso 
                     inabalável com a qualidade e o meio ambiente.
                 </p>
+                <br><br>
 
-                
+
+                <div class="contato" id="contato">
+                <h1>Contato:</h1>
+            <!-- Whastapp -->
+                <div class="whatsapp-container">
+                <p>📞 Para quaisquer dúvidas ou informações, entre em contato conosco pelo WhatsApp:</p>
+                <a href="https://wa.me/5561998916927?text=Olá,%20gostaria%20de%20tirar%20uma%20dúvida." target="_blank">
+                Falar no WhatsApp
+               </a>
+              </div>            
             </div>
         </div>
     </div>

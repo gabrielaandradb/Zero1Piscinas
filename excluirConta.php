@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['usuarioId'])) {
         $stmtPiscinas->bindParam(':id', $usuarioId, PDO::PARAM_INT);
         $stmtPiscinas->execute();
 
-        // 2. Excluir solicitações relacionadas ao cliente (ajuste o nome da tabela/coluna se necessário)
+        // 2. Excluir solicitações relacionadas ao cliente 
         $sqlSolicitacoes = "DELETE FROM solicitacoes WHERE cliente_id = :id";
         $stmtSolicitacoes = $conexao->prepare($sqlSolicitacoes);
         $stmtSolicitacoes->bindParam(':id', $usuarioId, PDO::PARAM_INT);

@@ -127,22 +127,15 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
         .menu ul li a:hover {
             color: #005f8a;
         }
-        .content {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            width: 100%;
-        }
         .header {
             left: 20px; 
             width: 1250px; 
             padding: 10px; 
-            background-color: white; 
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+            background-color: white;
+            border-radius: 8px; 
             text-align: left; 
-            font-family: Arial, sans-serif; 
+            font-family: Arial, sans-serif;             
+            overflow-y: auto; /* Adiciona rolagem se necessário */
         }
         .header h1 {
             font-size: 1.6em; 
@@ -205,6 +198,21 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
             background-color: #005f8a;
             transform: scale(1.05);
         }
+
+        .btn-excluir {
+            background-color: #0077b6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-excluir:hover {
+            background-color: #005f8a;
+            transform: scale(1.05);
+        }
+        
         .mensagem {
             text-align: center;
             margin: 20px; 
@@ -252,6 +260,7 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
             background-color: #005f8a;
             transform: scale(1.05);
         }
+        
         h2 img {
             width: 60px;
             height: 60px;
@@ -288,7 +297,6 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
             <h2>Zero1 Piscinas <br> <img src="img/logo1.png" alt="Logo"></h2>
             <ul>
                 <li><a href="Clientes.php">Voltar</a></li>
-                <li><a href="logout.php">Sair</a></li>
             </ul>
             <div id="perfil" class="card">
                 <h2>Meus Dados</h2>
@@ -301,11 +309,17 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
                 </button>
             </div>
         </div>
-        <div class="content">
+
             <div class="header">
                 <h1>Acompanhar Serviço</h1>
-                <p>Gerencie suas informações e acompanhe os serviços solicitados.</p>
+                <div class="header-text"><br>
+                <p class="welcome" >Gerencie suas informações e acompanhe os serviços solicitados.</p>
             </div>
+
+            <div> 
+            <a href="logout.php" class="btn">Sair <img src="img/sair.png" alt="sair"></a>
+            </div>
+        <br>
 
             <?php if (empty($piscinas)): ?>
     <div class="mensagem">
@@ -326,7 +340,7 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
                             <p><strong>Serviço Desejado:</strong> <?= htmlspecialchars($piscina['servico_desejado']); ?></p>
 
                             <div class="actions">
-                                <button class="btn" onclick="window.location.href='excluirSolicitacao.php';">
+                                <button class="btn-excluir" onclick="window.location.href='excluirSolicitacao.php';">
                                     <img src="img/excluir.png" alt="Excluir"> Cancelar Solicitação
                                 </button>
                             </div>
@@ -342,7 +356,7 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
                                 FROM servicos s
                                 LEFT JOIN pagamentos p ON s.id = p.servico_id
                                 WHERE s.piscina_id = :piscina_id
-                                AND (p.estatus IS NULL OR p.estatus != 'pago')
+                                AND (p.estatus IS NULL OR p.estatus = 'pendente')
                                 ORDER BY s.data_solicitacao DESC
                             ";
 
@@ -375,6 +389,7 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
                                                 <button class="btn btn-confirmar" type="submit" name="servico_id" value="<?= $servico['id']; ?>">
                                                     Confirmar
                                                 </button>
+                                                
                                             </form>
                                         <?php endif; ?>
 
@@ -386,7 +401,7 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
-        </div>
+        
     </div>
 </body>
 </html>

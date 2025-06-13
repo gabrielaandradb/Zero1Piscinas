@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $conexao->commit();
 
-        $mensagem_sucesso = "Resposta enviada com sucesso!";
+        $mensagem_sucesso = "Resposta enviada com sucesso! Redirecionando...";
     } catch (Exception $e) {
         if ($conexao->inTransaction()) {
             $conexao->rollBack();
@@ -122,11 +122,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p style="color: green; font-weight: bold;">
                 <?= htmlspecialchars($mensagem_sucesso) ?>
             </p>
+            <script>
+                setTimeout(function() {
+                    window.location.href = 'Profissionais.php';
+                }, 2000); // Redireciona após 2 segundos
+            </script>
         <?php elseif ($mensagem_erro): ?>
             <p style="color: red; font-weight: bold;">
                 <?= htmlspecialchars($mensagem_erro) ?>
             </p>
         <?php endif; ?>
+
 
         <p><strong>Cliente:</strong> <?= htmlspecialchars($solicitacao['cliente_nome']) ?></p>
         <p><strong>Email:</strong> <?= htmlspecialchars($solicitacao['cliente_email']) ?></p>

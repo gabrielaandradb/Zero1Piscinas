@@ -18,9 +18,9 @@ if (empty($id_profissional)) {
 }
 
 // Busca os dados do profissional com o ID armazenado na sessão
-$query = "SELECT * FROM usuarios WHERE id = :id_profissional AND tipo_usuario = 'profissional' AND email LIKE '%@profissional.com' LIMIT 1";
+$query = "SELECT * FROM usuarios WHERE id = :id AND tipo_usuario = 'profissional' AND email LIKE '%@profissional.com' LIMIT 1";
 $stmt = $conexao->prepare($query);
-$stmt->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+$stmt->bindParam(':id', $id_profissional, PDO::PARAM_INT);
 $stmt->execute();
 
 // Pega o resultado da consulta
@@ -46,13 +46,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Atualiza os dados no banco de dados
-    $updateQuery = "UPDATE usuarios SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco WHERE id = :id_profissional";
+    $updateQuery = "UPDATE usuarios SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco WHERE id = :id";
     $stmtUpdate = $conexao->prepare($updateQuery);
     $stmtUpdate->bindParam(':nome', $nome);
     $stmtUpdate->bindParam(':email', $email);
     $stmtUpdate->bindParam(':telefone', $telefone);
     $stmtUpdate->bindParam(':endereco', $endereco);
-    $stmtUpdate->bindParam(':id_profissional', $id_profissional, PDO::PARAM_INT);
+    $stmt->bindParam(':id', $usuario['id'], PDO::PARAM_INT);
 
     if ($stmtUpdate->execute()) {
         // Redireciona de volta para o perfil após a atualização
