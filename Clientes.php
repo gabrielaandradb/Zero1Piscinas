@@ -43,26 +43,25 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
             color: #333;
             display: flex;
             flex-direction: column;
-            align-items: center;  /* Garante que o conteúdo da página se alinhe no centro horizontalmente */
-            overflow-x: hidden; /* Impede a rolagem lateral */
+            align-items: center;  
+            overflow-x: hidden; 
         }
 
         .container {
-            width: 100%;   /* A largura será 100% da largura disponível */
-            min-width: 100vw; /* Garante que o conteúdo ocupe a largura total da tela */
+            width: 100%;   
+            min-width: 100vw; 
             display: flex;
             height: auto;
-            padding-left: 300px;    /* Remove o padding */
-            margin: 0;     /* Remove a margem */
+            padding-left: 300px;   
+            margin: 0; 
         }
-
 
         .menu {
             position: fixed; /* Fixa a barra lateral na tela */
             top: 0;
             left: 0;
             height: 100%; /* Faz com que a barra lateral ocupe toda a altura */
-            width: 300px; /* Define a largura fixa */
+            width: 300px; 
             background-color: #E0F7FA; 
             color: #374151; 
             padding: 20px;
@@ -70,6 +69,7 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
             flex-direction: column;
             align-items: center;
             text-align: left;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
             overflow-y: auto; /* Adiciona rolagem se necessário */
         }
 
@@ -112,28 +112,27 @@ $infoPendente = empty($_SESSION['ClassUsuarios']['telefone']) || empty($_SESSION
         }
 
         .header {
-            left: 20px; /* Margem esquerda */
-            width: 1250px; /* Largura fixa */
-            padding: 10px; /* Espaçamento interno */
-            background-color: white; /* Fundo claro */
-            border-radius: 8px; /* Cantos arredondados */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para destaque */
-            text-align: left; /* Alinha texto à esquerda */
-            font-family: Arial, sans-serif; /* Fonte padrão */
+            left: 20px; 
+            width: 1250px; 
+            padding: 10px; 
+            background-color: white;
+            border-radius: 8px; 
+            text-align: left; 
+            font-family: Arial, sans-serif; 
         }
 
         /* Estilo do título */
         .header h1 {
-            font-size: 1.6em; /* Tamanho do título */
-            margin: 0 0 10px; /* Margem inferior do título */
-            color: #333; /* Cor escura */
+            font-size: 1.6em; 
+            margin: 0 0 10px; 
+            color: #333; 
         }
 
         .header-text .welcome {
-            font-size: 1.1em; /* Tamanho do subtítulo */
-            color: #555; /* Cor neutra */
-            line-height: 0.1; /* Altura da linha */
-            margin-bottom: 20px; /* Espaço entre o texto e o botão */
+            font-size: 1.1em; 
+            color: #555; 
+            line-height: 0.1; 
+            margin-bottom: 20px; 
         }
 
         .header .btn {

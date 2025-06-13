@@ -334,7 +334,6 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
                         <br>
 
                         <div class="servicos-solicitados">
-                            <!-- Título removido para esconder no JS -->
                             <h3>Serviços Solicitados:</h3>
 
                             <?php
