@@ -47,7 +47,6 @@ $stmt->fetch();
 $stmt->close();
 
 if (!$clienteExiste) {
-    // Insere na tabela clientes
     $stmt = $Conexao->prepare("INSERT INTO clientes (id) VALUES (?)");
     $stmt->bind_param('i', $usuarioId);
     if (!$stmt->execute()) {
@@ -66,7 +65,7 @@ $tipo = htmlspecialchars(trim($_POST['tipo']));
 $profundidade = htmlspecialchars(trim($_POST['profundidade']));
 $dataInstalacao = htmlspecialchars(trim($_POST['dataInstalacao']));
 $servico = htmlspecialchars(trim($_POST['servico']));
-$preco = floatval($_POST['preco']); // Você calcula isso antes ou vem do formulário
+$preco = floatval($_POST['preco']); 
 
 // Depois de receber $tamanho e $servico do POST:
 $tamanho = strtolower(trim($_POST['tamanho']));

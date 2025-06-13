@@ -28,23 +28,23 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
             color: #333;
             display: flex;
             flex-direction: column;
-            align-items: center;  /* Garante que o conteúdo da página se alinhe no centro horizontalmente */
-            overflow-x: hidden; /* Impede a rolagem lateral */
-            width: 100%;   /* A largura será 100% da largura disponível */
-                min-width: 100vw; /* Garante que o conteúdo ocupe a largura total da tela */
-                height: 100%;  /* A altura será 100% da altura da tela */
-                padding: 0;    /* Remove o padding */
-                margin: 0;     /* Remove a margem */
-                text-align: center;  /* Centraliza o texto */
+            align-items: center;  
+            overflow-x: hidden; 
+            width: 100%;   
+            min-width: 100vw; 
+            height: 100%;  
+            padding: 0;    
+            margin: 0;   
+            text-align: center;  
         }
 
         .index {
-                width: 100%;   /* A largura será 100% da largura disponível */
-                min-width: 100vw; /* Garante que o conteúdo ocupe a largura total da tela */
-                height: 100%;  /* A altura será 100% da altura da tela */
-                padding: 0;    /* Remove o padding */
-                margin: 0;     /* Remove a margem */
-                text-align: center;  /* Centraliza o texto */
+            width: 100%;   
+            min-width: 100vw; 
+            height: 100%;  
+            padding: 0;    
+            margin: 0;     
+            text-align: center;  
         }
 
         .p-estilo {
@@ -74,7 +74,7 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
             letter-spacing: 1px;
             color: #0077b6;
             font-weight: bold;
-            margin: 0; /* remove margem padrão */
+            margin: 0;
             text-align: left;
             
         }
@@ -82,7 +82,7 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
         .usuario-info {
             display: flex;
             align-items: center;
-            gap: 20px; /* espaço entre nome e botão */
+            gap: 20px; 
         }
 
         .saudacao-login {
@@ -96,7 +96,7 @@ $usuario = isset($_SESSION['ClassUsuarios']) ? $_SESSION['ClassUsuarios'] : null
             display: inline-block;
             padding: 10px 20px;
             background-color: #0056b3;
-            color: white; /* Cor do texto do botão */
+            color: white; 
             text-decoration: none;
             border-radius: 5px;
             text-align: right;

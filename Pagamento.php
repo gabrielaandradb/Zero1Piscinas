@@ -28,7 +28,6 @@ $stmtServico->execute();
 
 $servico = $stmtServico->fetch(PDO::FETCH_ASSOC);
 
-// Verifica se há serviços associados
 if (!$servico) {
     echo "Nenhum serviço contratado encontrado para este usuário.";
     exit;

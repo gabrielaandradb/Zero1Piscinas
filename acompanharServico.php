@@ -53,8 +53,32 @@ $queryPiscinas = "
 $stmtPiscinas = $conexao->prepare($queryPiscinas);
 $stmtPiscinas->bindParam(':cliente_id', $_SESSION['ClassUsuarios']['id'], PDO::PARAM_INT);
 $stmtPiscinas->execute();
-$piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
+$piscinasRaw = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
 
+// FILTRAR piscinas para mostrar somente as que possuem serviços NÃO pagos
+$piscinas = [];
+foreach ($piscinasRaw as $piscina) {
+    // Buscar serviços NÃO pagos para esta piscina
+    $queryServicos = "
+        SELECT s.id, s.tipo_servico, s.descricao, s.estatus, s.data_execucao, s.preco
+        FROM servicos s
+        LEFT JOIN pagamentos p ON s.id = p.servico_id
+        WHERE s.piscina_id = :piscina_id
+        AND (p.estatus IS NULL OR p.estatus != 'pago')
+        ORDER BY s.data_solicitacao DESC
+    ";
+
+    $stmtServicos = $conexao->prepare($queryServicos);
+    $stmtServicos->bindParam(':piscina_id', $piscina['id'], PDO::PARAM_INT);
+    $stmtServicos->execute();
+    $servicos = $stmtServicos->fetchAll(PDO::FETCH_ASSOC);
+
+    // Se houver pelo menos um serviço não pago, inclui essa piscina no array para exibição
+    if (!empty($servicos)) {
+        $piscina['servicos'] = $servicos;
+        $piscinas[] = $piscina;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -65,6 +89,7 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
     <link rel="shortcut icon" href="img/logo.webp" type="image/x-icon">
     <title>Minhas Piscinas e Serviços</title>
     <style>
+        /* Seu CSS aqui - mantive igual ao seu código original */
         * {
             margin: 0;
             padding: 0;
@@ -289,7 +314,6 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
         return true;
     }
 </script>
-
 </head>
 <body>
     <div class="container">
@@ -310,52 +334,24 @@ $piscinas = $stmtPiscinas->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
 
-            <div class="header">
-                <h1>Acompanhar Serviço</h1>
-                <div class="header-text"><br>
-                <p class="welcome" >Gerencie suas informações e acompanhe os serviços solicitados.</p>
+        <div class="header">
+            <h1>Acompanhar Serviço</h1>
+            <div class="header-text"><br>
+            <p class="welcome">Gerencie suas informações e acompanhe os serviços solicitados.</p>
             </div>
 
             <div> 
-            <a href="logout.php" class="btn">Sair <img src="img/sair.png" alt="sair"></a>
+                <a href="logout.php" class="btn">Sair <img src="img/sair.png" alt="sair"></a>
             </div>
-        <br>
+            <br>
 
             <?php if (empty($piscinas)): ?>
-    <div class="mensagem">
-        <p>Você ainda não solicitou nenhum serviço. <a href="Clientes.php">Clique aqui para solicitar</a>.</p>
-    </div>
-
-
-    
-<?php
-$exibiuAlgumaPiscina = false; // Flag para saber se algo foi exibido
-foreach ($piscinas as $piscina):
-    // Verifica se existem serviços ainda não pagos ou pendentes
-    $queryServicosVisiveis = "
-    SELECT COUNT(*) AS total
-    FROM servicos s
-    LEFT JOIN pagamentos p ON s.id = p.servico_id
-    WHERE s.piscina_id = :piscina_id
-    AND (p.estatus IS NULL OR p.estatus != 'pago')
-";
-
-    $stmtCheck = $conexao->prepare($queryServicosVisiveis);
-    $stmtCheck->bindParam(':piscina_id', $piscina['id'], PDO::PARAM_INT);
-    $stmtCheck->execute();
-    $resultado = $stmtCheck->fetch(PDO::FETCH_ASSOC);
-
-    if ($resultado['total'] == 0) {
-        continue; // pula essa piscina, pois todos os serviços estão pagos
-    }
-
-    $exibiuAlgumaPiscina = true;
-?>
-    ?>
-    
-
-        <div class="card">
-
+                <div class="mensagem">
+                    <p>Você ainda não possui serviços pendentes. <a href="Clientes.php">Clique aqui para solicitar</a>.</p>
+                </div>
+            <?php else: ?>
+                <?php foreach ($piscinas as $piscina): ?>
+                    <div class="card">
                         <div class="detalhes-piscina">
                             <h3>Formulário enviado:</h3>
                             <p><strong>Cliente:</strong> <?= htmlspecialchars($piscina['cliente_nome']); ?> (<?= htmlspecialchars($piscina['cliente_email']); ?>)</p>
@@ -367,7 +363,7 @@ foreach ($piscinas as $piscina):
                             <p><strong>Serviço Desejado:</strong> <?= htmlspecialchars($piscina['servico_desejado']); ?></p>
 
                             <div class="actions">
-                                <button class="btn-excluir" onclick="window.location.href='excluirSolicitacao.php';">
+                                <button class="btn-excluir" onclick="window.location.href='excluirSolicitacao.php?id=<?= $piscina['id']; ?>';">
                                     <img src="img/excluir.png" alt="Excluir"> Cancelar Solicitação
                                 </button>
                             </div>
@@ -377,63 +373,37 @@ foreach ($piscinas as $piscina):
                         <div class="servicos-solicitados">
                             <h3>Serviços Solicitados:</h3>
 
-                            <?php
-                            $queryServicos = "
-    SELECT s.id, s.tipo_servico, s.descricao, s.estatus, s.data_execucao, s.preco
-FROM servicos s
-LEFT JOIN pagamentos p ON s.id = p.servico_id
-WHERE s.piscina_id = :piscina_id
-  AND (p.estatus IS NULL OR p.estatus != 'pago')
-ORDER BY s.data_solicitacao DESC
+                            <?php foreach ($piscina['servicos'] as $servico): ?>
+                                <div class="servico-item">
+                                    <p><strong>Resposta do profissional:</strong> <?= nl2br(htmlspecialchars($servico['descricao'])); ?></p>
+                                    <p><strong>Status:</strong> <?= htmlspecialchars($servico['estatus']); ?></p>
+                                    <p><strong>Data de Execução:</strong> <?= $servico['data_execucao'] ? date('d/m/Y H:i', strtotime($servico['data_execucao'])) : 'Não executado'; ?></p>
+                                    <p><strong>Valor:</strong> R$ <?= number_format($servico['preco'], 2, ',', '.'); ?></p>
 
-";
+                                    <?php if ($servico['estatus'] === 'concluido'): ?>
+                                        <form action="Pagamento.php" method="GET" style="display:inline-block;">
+                                            <button class="btn" type="submit" name="servico_id" value="<?= $servico['id']; ?>">
+                                                Realizar Pagamento
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
 
+                                    <?php if ($servico['estatus'] === 'cancelado'): ?>
+                                        <form action="Confirmar.php" method="POST" style="display:inline-block;" onsubmit="return confirmarServico(this);">
+                                            <button class="btn btn-confirmar" type="submit" name="servico_id" value="<?= $servico['id']; ?>">
+                                                Confirmar
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
 
-
-                            $stmtServicos = $conexao->prepare($queryServicos);
-                            $stmtServicos->bindParam(':piscina_id', $piscina['id'], PDO::PARAM_INT);
-                            $stmtServicos->execute();
-                            $servicos = $stmtServicos->fetchAll(PDO::FETCH_ASSOC);
-                            ?>
-
-                            <?php if (empty($servicos)): ?>
-                                <p><strong>Status:</strong> Pendente
-                                    <br>Aguarde resposta do profissional</p>
-                            <?php else: ?>
-                                <?php foreach ($servicos as $servico): ?>
-                                    
-                                    <div class="servico-item">
-                                        <p><strong>Resposta do profissional:</strong> <?= nl2br(htmlspecialchars($servico['descricao'])); ?></p>
-                                        <p><strong>Status:</strong> <?= htmlspecialchars($servico['estatus']); ?></p>
-                                        <p><strong>Data de Execução:</strong> <?= $servico['data_execucao'] ? date('d/m/Y H:i', strtotime($servico['data_execucao'])) : 'Não executado'; ?></p>
-                                        <p><strong>Valor:</strong> R$ <?= number_format($servico['preco'], 2, ',', '.'); ?></p>
-
-                                        <?php if ($servico['estatus'] === 'concluido'): ?>
-                                            <form action="Pagamento.php" method="GET" style="display:inline-block;">
-                                                <button class="btn" type="submit" name="servico_id" value="<?= $servico['id']; ?>">
-                                                    Realizar Pagamento
-                                                </button>
-                                            </form>
-                                        <?php endif; ?>
-
-                                        <?php if ($servico['estatus'] === 'cancelado'): ?>
-                                            <form action="Confirmar.php" method="POST" style="display:inline-block;" onsubmit="return confirmarServico(this);">
-                                                <button class="btn btn-confirmar" type="submit" name="servico_id" value="<?= $servico['id']; ?>">
-                                                    Confirmar
-                                                </button>
-                                                
-                                            </form>
-                                        <?php endif; ?>
-
-                                    </div>
-                                    <hr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                                </div>
+                                <hr>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
-        
+        </div>
     </div>
 </body>
 </html>

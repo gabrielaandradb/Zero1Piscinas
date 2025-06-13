@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Verifique se o profissional está logado
 if (!isset($_SESSION['ClassUsuarios']) || $_SESSION['tipo_usuario'] !== 'profissional') {
     header('Location: LoginCadastro.php');
     exit;
@@ -22,7 +21,6 @@ if (!$profissional_id) {
     exit;
 }
 
-// Obter detalhes da solicitação
 $query_solicitacao = "
     SELECT 
         piscinas.*, 
@@ -42,7 +40,6 @@ if (!$solicitacao) {
     exit;
 }
 
-// Tabela de preços
 $tabelaPrecos = [
     "Limpeza de Piscinas" => ["pequena" => 150, "media" => 250, "grande" => 350],
     "Manutenção" => ["pequena" => 200, "media" => 300, "grande" => 400],
@@ -96,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Obter o ID do serviço recém-inserido
         $servico_id = $conexao->lastInsertId();
 
-        // Inserir na tabela pagamentos (apenas se o status for 'concluido')
+        // Inserir na tabela pagamentos se o status for concluido
         if ($status === 'concluido') {
             $query_pagamento = "
                 INSERT INTO pagamentos (servico_id, estatus, valor_pago)

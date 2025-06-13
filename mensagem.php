@@ -4,7 +4,6 @@ require_once 'Conexao.php';
 
 $conexao = Conexao::getInstance();
 
-// Receber dados do formulário (verifique se o nome do campo no form é 'pedidoId')
 $pedidoId = filter_input(INPUT_POST, 'pedidoId', FILTER_VALIDATE_INT);
 $mensagem = filter_input(INPUT_POST, 'mensagem', FILTER_SANITIZE_STRING);
 
@@ -22,7 +21,6 @@ if ($stmt_verificar->rowCount() == 0) {
     die('Pedido não encontrado. Por favor, verifique o ID do pedido.');
 }
 
-// Definir remetente (cliente ou profissional) conforme sessão
 $remetente = isset($_SESSION['usuario_tipo']) ? $_SESSION['usuario_tipo'] : 'cliente';
 
 // Inserir a mensagem

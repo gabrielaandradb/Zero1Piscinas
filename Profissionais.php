@@ -391,9 +391,7 @@ $piscinas = $stmt_piscinas->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <!-- Conteúdo Principal -->
     <div class="content">
-        <!-- Cabeçalho -->
         <div class="header">
              <h1>Bem-vindo Profissional, <strong><?= htmlspecialchars($profissional['nome']); ?></strong></h1>
         <div class="header-text">
@@ -435,7 +433,6 @@ $piscinas = $stmt_piscinas->fetchAll(PDO::FETCH_ASSOC);
 <div id="formularios" class="card">
     <h2>Formulários Recebidos</h2>
 
-    <!-- Opções de ordenação -->
 <p>
     Ordenar por data de solicitação: 
     <a href="?ordem=ASC">Mais antigos</a> | 

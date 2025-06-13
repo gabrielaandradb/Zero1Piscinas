@@ -13,7 +13,6 @@ if (isset($_POST['servico_id'])) {
     $conexao = Conexao::getInstance();
 
     try {
-        // Inicia uma transação
         $conexao->beginTransaction();
 
         // Localiza a piscina associada ao serviço
@@ -28,7 +27,6 @@ if (isset($_POST['servico_id'])) {
         $piscina_id = $stmtPiscina->fetchColumn();
 
         if ($piscina_id) {
-            // Remove os serviços associados à piscina
             $queryDeleteServicos = "DELETE FROM servicos WHERE piscina_id = :piscina_id";
             $stmtDeleteServicos = $conexao->prepare($queryDeleteServicos);
             $stmtDeleteServicos->bindParam(':piscina_id', $piscina_id, PDO::PARAM_INT);

@@ -17,16 +17,13 @@ if (empty($id_profissional)) {
     exit;
 }
 
-// Busca os dados do profissional com o ID armazenado na sessão
 $query = "SELECT * FROM usuarios WHERE id = :id AND tipo_usuario = 'profissional' AND email LIKE '%@profissional.com' LIMIT 1";
 $stmt = $conexao->prepare($query);
 $stmt->bindParam(':id', $id_profissional, PDO::PARAM_INT);
 $stmt->execute();
 
-// Pega o resultado da consulta
 $profissional = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Verifica se o profissional foi encontrado
 if (!$profissional) {
     echo "Profissional não encontrado ou email não permitido!";
     exit;
@@ -39,13 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $telefone = $_POST['telefone'];
     $endereco = $_POST['endereco'];
 
-    // Valida se o email termina em '@profissional.com'
     if (strpos($email, '@profissional.com') === false) {
         echo "O email deve terminar em '@profissional.com'!";
         exit;
     }
 
-    // Atualiza os dados no banco de dados
     $updateQuery = "UPDATE usuarios SET nome = :nome, email = :email, telefone = :telefone, endereco = :endereco WHERE id = :id";
     $stmtUpdate = $conexao->prepare($updateQuery);
     $stmtUpdate->bindParam(':nome', $nome);
@@ -55,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindParam(':id', $usuario['id'], PDO::PARAM_INT);
 
     if ($stmtUpdate->execute()) {
-        // Redireciona de volta para o perfil após a atualização
         header('Location: Profissionais.php');
         exit;
     } else {
@@ -89,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         <?php endif; ?>
 
-        <!-- Formulário para editar os dados do profissional -->
         <div class="form-container">
         <form action="editarProfissional.php" method="post">
             <label for="nome">Nome:</label>
